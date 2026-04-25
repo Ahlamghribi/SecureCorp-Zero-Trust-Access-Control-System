@@ -1,0 +1,36 @@
+[
+  {
+    "id": "policy-1",
+    "description": "Secret resources cannot be accessed from external location",
+    "effect": "deny",
+    "condition": {
+      "resource.classification": "secret",
+      "user.location": "external"
+    }
+  },
+  {
+    "id": "policy-2",
+    "description": "Department isolation: users can only access their own department resources",
+    "effect": "deny",
+    "condition": {
+      "resource.department_mismatch": true
+    }
+  },
+  {
+    "id": "policy-3",
+    "description": "Confidential resources require at least confidential clearance",
+    "effect": "deny",
+    "condition": {
+      "resource.classification": "confidential",
+      "user.clearance": "public"
+    }
+  },
+  {
+    "id": "policy-4",
+    "description": "Time-based access: only allowed between 08:00 and 18:00",
+    "effect": "deny",
+    "condition": {
+      "time_outside_hours": true
+    }
+  }
+]
