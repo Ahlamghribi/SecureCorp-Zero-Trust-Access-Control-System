@@ -14,7 +14,7 @@
 
 > *"Never trust, always verify."*
 > 
-> A fully interactive, production-grade **Zero-Trust Access Control System** built from scratch — alone — with RBAC, ABAC, JWT authentication, real-time attack detection, and a live security dashboard.
+> A fully interactive, production-grade **Zero-Trust Access Control System** built from scratch with RBAC, ABAC, JWT authentication, real-time attack detection, and a live security dashboard.
 
 <br/>
 
