@@ -1,0 +1,276 @@
+2026-04-26 01:41:56,797 [INFO] KDC Authentication Server starting on port 8000
+2026-04-26 01:42:24,759 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 01:42:25,256 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 12:57:46,619 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 12:57:46,661 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 12:58:30,839 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 12:59:23,602 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 12:59:23,620 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 13:02:21,929 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 13:02:21,942 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 13:03:27,071 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 13:03:27,087 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 13:03:30,159 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 13:03:30,174 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 13:03:33,807 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 13:03:33,831 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 13:03:36,874 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 13:03:36,892 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=res
+2026-04-26 13:03:36,912 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 6bc33ebb-c3ca-4c...
+2026-04-26 13:03:37,442 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 13:03:37,457 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 13:03:38,040 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 13:03:38,092 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 13:03:41,333 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 13:03:41,854 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 13:03:41,870 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 13:03:57,916 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 13:03:57,931 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 13:04:01,024 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 13:04:01,036 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 13:04:04,091 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 13:04:04,106 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 13:04:07,100 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 13:04:07,131 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=res
+2026-04-26 13:04:07,145 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 0841cc96-7701-4a...
+2026-04-26 13:04:07,667 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 13:04:07,681 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 13:04:08,217 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 13:04:08,234 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 13:04:11,267 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 13:04:11,782 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 13:04:11,797 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 13:11:51,976 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 13:11:51,993 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 13:12:10,724 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 13:12:16,049 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 13:12:21,666 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 13:12:21,689 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 13:12:25,352 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 13:12:59,505 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 13:12:59,519 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=res
+2026-04-26 13:12:59,533 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 321b857b-b7df-46...
+2026-04-26 13:48:12,492 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 13:48:14,819 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 13:48:15,789 [WARNING] [BRUTE_FORCE] user=alice status=ATTACK 3 failed attempts
+2026-04-26 13:48:28,523 [WARNING] [BRUTE_FORCE] user=alice status=ATTACK 4 failed attempts
+2026-04-26 13:56:46,921 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 13:56:46,990 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 13:56:53,858 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 13:57:07,976 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 13:57:15,485 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 13:57:16,267 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 13:58:02,258 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 13:58:02,360 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 13:58:25,764 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 13:58:25,830 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 13:58:59,090 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 13:58:59,155 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 14:20:29,008 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 14:20:29,036 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:28:05,201 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:28:07,661 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:28:09,357 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:29:34,586 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 14:29:34,645 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:29:38,581 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 14:29:38,606 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 14:29:42,470 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 14:29:42,521 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 14:29:46,417 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 14:29:46,436 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=res
+2026-04-26 14:29:46,451 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 23bde316-92bd-49...
+2026-04-26 14:29:47,004 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 14:29:47,069 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 14:29:47,653 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 14:29:47,702 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 14:29:51,662 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 14:29:52,199 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 14:29:52,261 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:35:56,920 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 14:35:57,022 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:36:04,083 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:36:06,487 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:36:09,595 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:38:12,684 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:39:26,093 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 14:39:26,179 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:40:19,761 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 14:40:19,868 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 14:40:24,449 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 14:40:27,099 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 14:42:14,204 [INFO] KDC Authentication Server starting on port 8000
+2026-04-26 14:42:39,369 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 14:42:39,418 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:42:42,868 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:42:45,717 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:42:56,821 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 14:42:56,897 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:43:01,779 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:43:04,146 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:44:18,451 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:44:26,740 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 14:46:39,554 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 14:46:39,596 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:46:42,637 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:46:44,149 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:47:39,156 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 14:47:39,189 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 14:48:29,141 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 14:48:29,165 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 15:07:02,696 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 15:07:02,767 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 15:07:19,824 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 15:07:50,453 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 15:07:50,471 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 15:08:02,055 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 15:08:02,076 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=res
+2026-04-26 15:08:02,094 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 36ae120d-8f7d-42...
+2026-04-26 15:08:05,935 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 15:08:06,158 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 15:08:06,408 [WARNING] [BRUTE_FORCE] user=alice status=ATTACK 3 failed attempts
+2026-04-26 15:10:45,341 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 15:10:45,366 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=res
+2026-04-26 15:10:45,380 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 60a9ef88-2fb6-43...
+2026-04-26 15:14:44,184 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 15:14:44,274 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 15:19:10,000 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 15:19:10,077 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 15:19:44,950 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 15:19:44,988 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 15:20:42,388 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 15:20:42,495 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 15:20:42,518 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: NONCE-FIXE-17772...
+2026-04-26 15:20:46,236 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 15:20:46,297 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 15:22:15,230 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 15:22:16,225 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 15:22:17,263 [WARNING] [BRUTE_FORCE] user=alice status=ATTACK 3 failed attempts
+2026-04-26 15:22:19,373 [WARNING] [BRUTE_FORCE] user=alice status=ATTACK 4 failed attempts
+2026-04-26 15:30:12,984 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 15:30:13,079 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 15:30:26,851 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 15:30:38,331 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 15:30:51,831 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: ahlam...
+2026-04-26 15:31:07,742 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 15:31:07,791 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 15:35:21,343 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 15:35:21,375 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=res
+2026-04-26 15:35:21,406 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 35d09cef-af9a-45...
+2026-04-26 15:35:22,643 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 15:35:22,697 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 15:35:26,362 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 15:35:28,520 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 15:35:28,542 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 15:37:30,876 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 15:37:30,989 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 15:37:38,040 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 15:38:47,796 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 15:39:01,952 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 15:39:07,590 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 07beca8akk...
+2026-04-26 15:39:17,709 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 15:39:17,749 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 15:40:36,766 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 15:40:36,865 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 15:41:31,478 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 07beca8akk...
+2026-04-26 15:41:54,561 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 15:41:55,258 [WARNING] [LOGIN] user=alice status=FAIL Wrong password
+2026-04-26 15:41:55,957 [WARNING] [BRUTE_FORCE] user=alice status=ATTACK 3 failed attempts
+2026-04-26 15:52:24,200 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 15:52:24,223 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 15:52:59,884 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 15:52:59,900 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 15:54:15,192 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 15:54:15,213 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 15:59:28,376 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 15:59:28,391 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:00:03,984 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 16:00:04,003 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 16:02:12,672 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 16:02:12,690 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 16:03:25,851 [ERROR] Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "C:\Users\asb\AppData\Local\Programs\Python\Python311\Lib\asyncio\events.py", line 84, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\asb\AppData\Local\Programs\Python\Python311\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+2026-04-26 16:03:26,159 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 16:03:26,178 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 16:05:46,391 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:05:46,411 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:08:28,293 [INFO] KDC Authentication Server starting on port 8000
+2026-04-26 16:09:12,417 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 16:09:12,434 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 16:09:30,013 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:09:30,027 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:14:14,194 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 16:14:14,214 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 16:15:11,353 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:15:11,364 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:15:13,196 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 16:15:13,208 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=res
+2026-04-26 16:15:13,216 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: 2299b3a0-83b0-40...
+2026-04-26 16:15:14,597 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:15:14,608 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:15:16,634 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:15:16,645 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:15:55,525 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:15:55,531 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:16:14,073 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:16:14,081 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:16:15,807 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:16:15,814 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:16:18,413 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 16:16:18,419 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=res
+2026-04-26 16:16:18,427 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: f7e7bcaa-b996-44...
+2026-04-26 16:16:28,126 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 16:16:32,303 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 16:16:33,687 [WARNING] [TICKET] user=unknown status=ATTACK Replay attack! Nonce reused: f4e03c07...
+2026-04-26 16:19:44,354 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:19:44,388 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:21:01,907 [INFO] KDC Authentication Server starting on port 8000
+2026-04-26 16:22:12,133 [INFO] KDC Authentication Server starting on port 8000
+2026-04-26 16:23:02,974 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 16:23:02,986 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 16:23:15,989 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 16:23:16,010 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 16:47:35,067 [INFO] KDC Authentication Server starting on port 8000
+2026-04-26 16:53:07,802 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 16:53:07,877 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 16:53:14,379 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 16:53:23,209 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 16:53:27,191 [WARNING] [REPLAY_ATTACK] user=bob status=ATTACK Replay attack! Nonce reused: 8bfc8c0a...
+2026-04-26 17:07:03,625 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 17:07:03,649 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 17:10:16,204 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 17:10:16,259 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 17:11:09,910 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 17:11:09,984 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 17:11:59,360 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 17:11:59,413 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 17:12:31,978 [INFO] [LOGIN] user=carol status=OK TGT issued. Role=Employee Dept=HR
+2026-04-26 17:12:32,039 [INFO] [TICKET] user=carol status=OK Service ticket issued for service=resource_server
+2026-04-26 17:12:59,135 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 17:13:10,416 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 17:13:38,781 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 17:13:38,800 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 17:13:46,931 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 18:33:11,982 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 18:33:12,022 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 18:33:18,605 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 18:35:12,623 [INFO] [LOGIN] user=alice status=OK TGT issued. Role=Admin Dept=IT
+2026-04-26 18:35:12,700 [INFO] [TICKET] user=alice status=OK Service ticket issued for service=resource_server
+2026-04-26 18:35:42,086 [INFO] [LOGIN] user=dave status=OK TGT issued. Role=Employee Dept=Finance
+2026-04-26 18:35:42,115 [INFO] [TICKET] user=dave status=OK Service ticket issued for service=resource_server
+2026-04-26 18:36:22,788 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 18:36:27,312 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 18:36:29,977 [WARNING] [REPLAY_ATTACK] user=bob status=ATTACK Replay attack! Nonce reused: ahlamghribi...
+2026-04-26 18:36:35,309 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 18:36:46,511 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 18:36:46,527 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 18:37:35,616 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 18:37:35,635 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server
+2026-04-26 18:37:45,947 [INFO] [LOGIN] user=bob status=OK TGT issued. Role=Manager Dept=Finance
+2026-04-26 18:37:45,985 [INFO] [TICKET] user=bob status=OK Service ticket issued for service=resource_server

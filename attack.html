@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Attack Console — SecureCorp</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Courier New', monospace; background: #0d0f14; color: #e0e4f0; min-height: 100vh; padding: 24px; }
+
+h1 { font-size: 18px; color: #7c8fff; margin-bottom: 4px; }
+.subtitle { font-size: 12px; color: #545969; margin-bottom: 28px; }
+
+.attack { background: #111318; border: 1px solid #1e2230; border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+.attack-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; }
+.attack-header:hover { background: #181b22; }
+
+.num { font-size: 11px; font-weight: 700; color: #545969; min-width: 24px; }
+.atk-title { font-size: 13px; font-weight: 700; color: #eaedf5; flex: 1; }
+.atk-badge { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 99px; }
+.badge-red    { background: rgba(247,92,92,0.12); color: #f75c5c; border: 1px solid rgba(247,92,92,0.2); }
+.badge-amber  { background: rgba(240,164,41,0.12); color: #f0a429; border: 1px solid rgba(240,164,41,0.2); }
+.badge-green  { background: rgba(46,212,122,0.1); color: #2ed47a; border: 1px solid rgba(46,212,122,0.2); }
+
+.attack-body { display: none; padding: 0 18px 16px; border-top: 1px solid #1e2230; }
+.attack.open .attack-body { display: block; }
+
+.desc { font-size: 12px; color: #8b91a8; margin: 12px 0 14px; line-height: 1.7; font-family: sans-serif; }
+
+.run-btn {
+  display: inline-block; padding: 8px 20px; border-radius: 8px;
+  border: none; cursor: pointer; font-size: 12px; font-weight: 700;
+  font-family: 'Courier New', monospace; letter-spacing: 0.5px;
+  background: #4f6ef7; color: #fff; transition: all 0.2s; margin-bottom: 14px;
+}
+.run-btn:hover { background: #7c8fff; }
+.run-btn:disabled { background: #1e2230; color: #545969; cursor: not-allowed; }
+
+.output { display: none; }
+.output.show { display: block; }
+
+.section-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: #545969; text-transform: uppercase; margin-bottom: 6px; margin-top: 12px; }
+
+.code-block {
+  background: #080a0d; border: 1px solid #1e2230; border-radius: 6px;
+  padding: 12px 14px; font-size: 11.5px; line-height: 1.8;
+  white-space: pre-wrap; word-break: break-all; color: #8b91a8;
+  max-height: 200px; overflow-y: auto;
+}
+
+.result-block {
+  background: #080a0d; border-radius: 6px; padding: 12px 14px;
+  font-size: 11.5px; line-height: 1.8; white-space: pre-wrap;
+  word-break: break-all; max-height: 220px; overflow-y: auto;
+}
+.result-block.ok  { border: 1px solid rgba(46,212,122,0.25); color: #6ee7aa; }
+.result-block.err { border: 1px solid rgba(247,92,92,0.25);  color: #f79a9a; }
+.result-block.atk { border: 1px solid rgba(240,164,41,0.25); color: #fad07a; }
+
+.jwt-box { background: #080a0d; border: 1px solid #1e2230; border-radius: 6px; padding: 12px 14px; margin-top: 8px; }
+.jwt-part { font-size: 11px; margin-bottom: 6px; line-height: 1.6; word-break: break-all; }
+.jwt-part span.label { font-size: 9px; font-weight: 700; letter-spacing: 1px; display: block; margin-bottom: 2px; color: #545969; }
+.jwt-header  { color: #f75c5c; }
+.jwt-payload { color: #f0a429; }
+.jwt-sig     { color: #4f6ef7; }
+.jwt-sig.tampered { color: #f75c5c; text-decoration: line-through; }
+
+.chevron { font-size: 10px; color: #545969; transition: transform 0.2s; }
+.attack.open .chevron { transform: rotate(90deg); }
+
+.step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.step-dot { width: 6px; height: 6px; border-radius: 50%; background: #545969; margin-top: 6px; flex-shrink: 0; }
+.step-dot.ok { background: #2ed47a; }
+.step-dot.err { background: #f75c5c; }
+.step-dot.atk { background: #f0a429; }
+.step-txt { font-size: 12px; color: #8b91a8; font-family: sans-serif; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<h1>SecureCorp — Attack Console</h1>
+<p class="subtitle">Ouvre la console F12 pour voir les détails réseau. Clique sur une attaque pour la lancer.</p>
+
+<!-- ATTACK 1 -->
+<div class="attack open" id="a1">
+  <div class="attack-header" onclick="toggle('a1')">
+    <span class="num">01</span>
+    <span class="atk-title">Replay Attack — réutilisation du nonce</span>
+    <span class="atk-badge badge-red">ATTACK</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="attack-body">
+    <p class="desc">On envoie 2 fois la même requête avec le même nonce. Le KDC stocke les nonces utilisés et bloque la 2ème.</p>
+    <button class="run-btn" onclick="runReplay()">Lancer l'attaque</button>
+    <div class="output" id="out1">
+      <div class="section-label">Étapes</div>
+      <div id="steps1"></div>
+      <div class="section-label">Résultat</div>
+      <div class="result-block atk" id="res1"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ATTACK 2 -->
+<div class="attack" id="a2">
+  <div class="attack-header" onclick="toggle('a2')">
+    <span class="num">02</span>
+    <span class="atk-title">Ticket Tampering — modification du JWT</span>
+    <span class="atk-badge badge-red">ATTACK</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="attack-body">
+    <p class="desc">On obtient un vrai ticket JWT, on modifie les derniers caractères (signature), puis on essaie de l'utiliser. La signature ne correspond plus → rejeté.</p>
+    <button class="run-btn" onclick="runTamper()">Lancer l'attaque</button>
+    <div class="output" id="out2">
+      <div class="section-label">Token original vs falsifié</div>
+      <div class="jwt-box" id="jwtBox">
+        <div class="jwt-part"><span class="label">HEADER (rouge)</span><span class="jwt-header" id="jh">—</span></div>
+        <div class="jwt-part"><span class="label">PAYLOAD (orange)</span><span class="jwt-payload" id="jp">—</span></div>
+        <div class="jwt-part"><span class="label">SIGNATURE (bleue) — modifiée ici</span><span class="jwt-sig" id="js">—</span></div>
+      </div>
+      <div class="section-label">Résultat</div>
+      <div class="result-block" id="res2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ATTACK 3 -->
+<div class="attack" id="a3">
+  <div class="attack-header" onclick="toggle('a3')">
+    <span class="num">03</span>
+    <span class="atk-title">Privilege Escalation — Employee tente DELETE</span>
+    <span class="atk-badge badge-amber">RBAC</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="attack-body">
+    <p class="desc">Carol est Employee → seulement READ autorisé. Elle tente de supprimer une ressource. Le PDP refuse via RBAC.</p>
+    <button class="run-btn" onclick="runPrivEsc()">Lancer l'attaque</button>
+    <div class="output" id="out3">
+      <div class="section-label">Étapes</div>
+      <div id="steps3"></div>
+      <div class="section-label">Résultat</div>
+      <div class="result-block err" id="res3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ATTACK 4 -->
+<div class="attack" id="a4">
+  <div class="attack-header" onclick="toggle('a4')">
+    <span class="num">04</span>
+    <span class="atk-title">Brute Force — 3 mauvais mots de passe</span>
+    <span class="atk-badge badge-red">ATTACK</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="attack-body">
+    <p class="desc">3 tentatives de login avec un mauvais mot de passe → le KDC détecte et loggue BRUTE_FORCE dans l'audit log.</p>
+    <button class="run-btn" onclick="runBrute()">Lancer l'attaque</button>
+    <div class="output" id="out4">
+      <div class="section-label">Tentatives</div>
+      <div id="steps4"></div>
+      <div class="section-label">Résultat audit log</div>
+      <div class="result-block atk" id="res4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ATTACK 5 -->
+<div class="attack" id="a5">
+  <div class="attack-header" onclick="toggle('a5')">
+    <span class="num">05</span>
+    <span class="atk-title">Accès externe — Dave tente ressource secrète</span>
+    <span class="atk-badge badge-amber">ABAC</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="attack-body">
+    <p class="desc">Dave est "external". La policy-1 bloque l'accès aux ressources "secret" depuis l'extérieur. res-002 = Finance secret.</p>
+    <button class="run-btn" onclick="runExternal()">Lancer l'attaque</button>
+    <div class="output" id="out5">
+      <div class="section-label">Étapes</div>
+      <div id="steps5"></div>
+      <div class="section-label">Résultat</div>
+      <div class="result-block err" id="res5"></div>
+    </div>
+  </div>
+</div>
+
+<!-- VALID ACCESS -->
+<div class="attack" id="a6">
+  <div class="attack-header" onclick="toggle('a6')">
+    <span class="num">06</span>
+    <span class="atk-title">Accès valide — Alice lit un doc public</span>
+    <span class="atk-badge badge-green">ALLOW</span>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="attack-body">
+    <p class="desc">Pour montrer que le système marche normalement : Alice (Admin) lit le Company Handbook (public). Tout passe.</p>
+    <button class="run-btn" onclick="runValid()">Lancer</button>
+    <div class="output" id="out6">
+      <div class="section-label">Étapes</div>
+      <div id="steps6"></div>
+      <div class="section-label">Résultat</div>
+      <div class="result-block ok" id="res6"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const KDC = 'http://localhost:8000';
+const RES = 'http://localhost:8002';
+
+function toggle(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function addStep(containerId, text, status) {
+  const c = document.getElementById(containerId);
+  const d = document.createElement('div');
+  d.className = 'step';
+  d.innerHTML = `<div class="step-dot ${status}"></div><div class="step-txt">${text}</div>`;
+  c.appendChild(d);
+}
+
+function showOutput(id) {
+  document.getElementById('out' + id).classList.add('show');
+}
+
+async function login(user, pass = 'password123') {
+  const r = await fetch(KDC + '/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: user, password: pass })
+  });
+  return { ok: r.ok, data: await r.json(), status: r.status };
+}
+
+async function getTicket(tgt, nonce) {
+  const r = await fetch(KDC + '/request-ticket', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tgt, service: 'resource_server', nonce })
+  });
+  return { ok: r.ok, data: await r.json(), status: r.status };
+}
+
+async function accessResource(ticket, resId, method = 'GET') {
+  const r = await fetch(`${RES}/resource/${resId}`, {
+    method,
+    headers: { 'Authorization': 'Bearer ' + ticket }
+  });
+  return { ok: r.ok, data: await r.json(), status: r.status };
+}
+
+// ── ATTAQUE 1 : REPLAY ──
+async function runReplay() {
+  document.getElementById('steps1').innerHTML = '';
+  document.getElementById('res1').textContent = '';
+  showOutput(1);
+  document.querySelector('#a1 .run-btn').disabled = true;
+
+  const login1 = await login('bob');
+  addStep('steps1', `Login bob → TGT reçu (${login1.status})`, 'ok');
+
+  const nonce = 'NONCE-FIXE-' + Date.now();
+  const t1 = await getTicket(login1.data.tgt, nonce);
+  addStep('steps1', `1ère requête ticket (nonce: ${nonce.slice(-8)}) → ${t1.status} OK`, 'ok');
+
+  const t2 = await getTicket(login1.data.tgt, nonce);
+  const blocked = !t2.ok;
+  addStep('steps1', `2ème requête MÊME nonce → ${t2.status} ${blocked ? '🔴 BLOQUÉ' : '🟢 Passé'}`, blocked ? 'atk' : 'err');
+
+  document.getElementById('res1').textContent =
+    blocked
+      ? '✓ REPLAY DÉTECTÉ\n' + JSON.stringify(t2.data, null, 2)
+      : '✗ Non bloqué — vérifier le serveur';
+
+  document.querySelector('#a1 .run-btn').disabled = false;
+}
+
+// ── ATTAQUE 2 : TICKET TAMPERING ──
+async function runTamper() {
+  document.getElementById('jh').textContent = '—';
+  document.getElementById('jp').textContent = '—';
+  document.getElementById('js').textContent = '—';
+  document.getElementById('res2').textContent = '';
+  document.getElementById('res2').className = 'result-block';
+  showOutput(2);
+  document.querySelector('#a2 .run-btn').disabled = true;
+
+  const l = await login('carol');
+  const nonce = crypto.randomUUID();
+  const t = await getTicket(l.data.tgt, nonce);
+  const ticket = t.data.service_ticket;
+
+  const parts = ticket.split('.');
+  document.getElementById('jh').textContent = parts[0];
+  document.getElementById('jp').textContent = parts[1];
+  document.getElementById('js').textContent = parts[2];
+
+  const tampered = parts[0] + '.' + parts[1] + '.' + parts[2].slice(0, -8) + 'XXXXXXXX';
+  document.getElementById('js').textContent = tampered.split('.')[2];
+  document.getElementById('js').className = 'jwt-sig tampered';
+
+  const r = await accessResource(tampered, 'res-001');
+  const blocked = !r.ok;
+
+  document.getElementById('res2').className = 'result-block ' + (blocked ? 'atk' : 'ok');
+  document.getElementById('res2').textContent =
+    blocked
+      ? '✓ TAMPERING DÉTECTÉ\n' + JSON.stringify(r.data, null, 2)
+      : '✗ Non bloqué';
+
+  document.querySelector('#a2 .run-btn').disabled = false;
+}
+
+// ── ATTAQUE 3 : PRIVILEGE ESCALATION ──
+async function runPrivEsc() {
+  document.getElementById('steps3').innerHTML = '';
+  document.getElementById('res3').textContent = '';
+  showOutput(3);
+  document.querySelector('#a3 .run-btn').disabled = true;
+
+  const l = await login('carol');
+  addStep('steps3', 'Login carol (Employee / HR / public) → OK', 'ok');
+
+  const t = await getTicket(l.data.tgt, crypto.randomUUID());
+  addStep('steps3', 'Ticket de service obtenu → OK', 'ok');
+
+  const r = await accessResource(t.data.service_ticket, 'res-004', 'DELETE');
+  const blocked = !r.ok;
+  addStep('steps3', `DELETE /resource/res-004 → ${r.status} ${blocked ? 'REFUSÉ par RBAC' : 'Accepté (erreur!)'}`, blocked ? 'err' : 'atk');
+
+  document.getElementById('res3').textContent =
+    blocked
+      ? '✓ RBAC bloque Employee → DELETE interdit\n' + JSON.stringify(r.data, null, 2)
+      : '✗ Non bloqué';
+
+  document.querySelector('#a3 .run-btn').disabled = false;
+}
+
+// ── ATTAQUE 4 : BRUTE FORCE ──
+async function runBrute() {
+  document.getElementById('steps4').innerHTML = '';
+  document.getElementById('res4').textContent = '';
+  showOutput(4);
+  document.querySelector('#a4 .run-btn').disabled = true;
+
+  for (let i = 1; i <= 3; i++) {
+    const r = await login('alice', 'WRONG_PASSWORD_' + i);
+    addStep('steps4', `Tentative ${i} — mot de passe "WRONG_PASSWORD_${i}" → ${r.status} ${r.data.detail}`, 'err');
+    await new Promise(res => setTimeout(res, 400));
+  }
+
+  const log = await fetch(KDC + '/audit-log').then(r => r.json()).catch(() => null);
+  const bruteEntry = log?.entries?.filter(e => e.status === 'ATTACK').slice(-1)[0];
+
+  document.getElementById('res4').textContent = bruteEntry
+    ? '✓ BRUTE FORCE détecté dans audit log :\n' + JSON.stringify(bruteEntry, null, 2)
+    : '✓ 3 tentatives échouées — voir audit log pour BRUTE_FORCE';
+
+  document.querySelector('#a4 .run-btn').disabled = false;
+}
+
+// ── ATTAQUE 5 : EXTERNAL BLOCKED ──
+async function runExternal() {
+  document.getElementById('steps5').innerHTML = '';
+  document.getElementById('res5').textContent = '';
+  showOutput(5);
+  document.querySelector('#a5 .run-btn').disabled = true;
+
+  const l = await login('dave');
+  addStep('steps5', 'Login dave (Employee / Finance / External) → OK', 'ok');
+
+  const t = await getTicket(l.data.tgt, crypto.randomUUID());
+  addStep('steps5', 'Ticket obtenu (location=external dans le JWT) → OK', 'ok');
+
+  const r = await accessResource(t.data.service_ticket, 'res-002');
+  const blocked = !r.ok;
+  addStep('steps5', `GET /resource/res-002 (Finance secret) → ${r.status} ${blocked ? 'BLOQUÉ policy-1' : 'Accepté (erreur!)'}`, blocked ? 'err' : 'atk');
+
+  document.getElementById('res5').textContent =
+    blocked
+      ? '✓ ABAC policy-1 bloque accès externe → secret\n' + JSON.stringify(r.data, null, 2)
+      : '✗ Non bloqué';
+
+  document.querySelector('#a5 .run-btn').disabled = false;
+}
+
+// ── ACCÈS VALIDE ──
+async function runValid() {
+  document.getElementById('steps6').innerHTML = '';
+  document.getElementById('res6').textContent = '';
+  showOutput(6);
+  document.querySelector('#a6 .run-btn').disabled = true;
+
+  const l = await login('alice');
+  addStep('steps6', 'Login alice (Admin / IT / secret / internal) → OK', 'ok');
+
+  const t = await getTicket(l.data.tgt, crypto.randomUUID());
+  addStep('steps6', 'Ticket de service obtenu → OK', 'ok');
+
+  const r = await accessResource(t.data.service_ticket, 'res-004');
+  addStep('steps6', `GET /resource/res-004 (Company Handbook / public) → ${r.status} ${r.ok ? 'ALLOW' : 'DENY'}`, r.ok ? 'ok' : 'err');
+
+  document.getElementById('res6').textContent = r.ok
+    ? '✓ ACCÈS ACCORDÉ\n' + JSON.stringify(r.data, null, 2)
+    : '✗ Refusé — ' + JSON.stringify(r.data);
+
+  document.querySelector('#a6 .run-btn').disabled = false;
+}
+</script>
+</body>
+</html>

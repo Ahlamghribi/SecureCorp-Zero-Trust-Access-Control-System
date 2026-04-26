@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureCorp — IAM Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+ --bg: #0a0b0e;
+ --surface: #111318;
+ --surface2: #181b22;
+ --surface3: #1e2230;
+ --border: rgba(255,255,255,0.06);
+ --border2: rgba(255,255,255,0.10);
+ --accent: #4f6ef7;
+ --accent2: #7c8fff;
+ --accent-dim:rgba(79,110,247,0.12);
+ --green: #2ed47a;
+ --green-dim: rgba(46,212,122,0.1);
+ --red: #f75c5c;
+ --red-dim: rgba(247,92,92,0.1);
+ --amber: #f0a429;
+ --amber-dim: rgba(240,164,41,0.1);
+ --text: #eaedf5;
+ --text2: #8b91a8;
+ --text3: #545969;
+ --font: 'Poppins', sans-serif;
+ --radius: 10px;
+ --radius-lg: 16px;
+ --shadow: 0 4px 24px rgba(0,0,0,0.5);
+ --shadow-lg: 0 12px 48px rgba(0,0,0,0.7);
+ --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { font-size: 14px; }
+
+body {
+ font-family: var(--font);
+ background: var(--bg);
+ color: var(--text);
+ height: 100vh;
+ overflow: hidden;
+ display: flex;
+ flex-direction: column;
+}
+
+/* Subtle noise texture overlay */
+body::after {
+ content: '';
+ position: fixed;
+ inset: 0;
+ background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+ pointer-events: none;
+ z-index: 9999;
+ opacity: 0.4;
+}
+
+/* TOPBAR */
+.topbar {
+ height: 52px;
+ display: flex;
+ align-items: center;
+ padding: 0 28px;
+ border-bottom: 1px solid var(--border);
+ background: var(--surface);
+ flex-shrink: 0;
+ gap: 0;
+ position: relative;
+ z-index: 100;
+}
+
+.brand {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ min-width: 220px;
+}
+
+.brand-mark {
+ width: 28px;
+ height: 28px;
+ border: 1.5px solid var(--accent);
+ border-radius: 6px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ position: relative;
+ overflow: hidden;
+}
+
+.brand-mark::before {
+ content: '';
+ position: absolute;
+ inset: 3px;
+ border: 1px solid var(--accent2);
+ border-radius: 3px;
+ opacity: 0.5;
+ animation: brandPulse 4s ease-in-out infinite;
+}
+
+@keyframes brandPulse {
+ 0%, 100% { transform: scale(1); opacity: 0.5; }
+ 50% { transform: scale(0.85); opacity: 1; }
+}
+
+.brand-dot {
+ width: 6px;
+ height: 6px;
+ background: var(--accent);
+ border-radius: 50%;
+ animation: brandPulse 4s ease-in-out infinite;
+}
+
+.brand-name {
+ font-size: 14px;
+ font-weight: 700;
+ letter-spacing: 0.3px;
+ color: var(--text);
+}
+
+.brand-tag {
+ font-size: 10px;
+ font-weight: 400;
+ color: var(--text3);
+ letter-spacing: 1px;
+ text-transform: uppercase;
+ margin-left: 2px;
+}
+
+.topbar-center {
+ flex: 1;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 6px;
+}
+
+.srv-pill {
+ display: flex;
+ align-items: center;
+ gap: 6px;
+ padding: 4px 12px;
+ border-radius: 20px;
+ border: 1px solid var(--border);
+ font-size: 11px;
+ font-weight: 500;
+ color: var(--text3);
+ background: var(--surface2);
+ transition: var(--transition);
+ cursor: default;
+}
+
+.srv-pill.up { border-color: rgba(46,212,122,0.2); color: var(--text2); }
+.srv-pill.down { border-color: rgba(247,92,92,0.2); color: var(--red); }
+
+.srv-dot {
+ width: 5px;
+ height: 5px;
+ border-radius: 50%;
+ background: var(--text3);
+ transition: var(--transition);
+}
+
+.srv-pill.up .srv-dot { background: var(--green); box-shadow: 0 0 6px var(--green); animation: dotPulse 2.5s infinite; }
+.srv-pill.down .srv-dot { background: var(--red); }
+
+@keyframes dotPulse {
+ 0%, 100% { opacity: 1; }
+ 50% { opacity: 0.4; }
+}
+
+.topbar-right {
+ min-width: 220px;
+ display: flex;
+ align-items: center;
+ justify-content: flex-end;
+ gap: 12px;
+}
+
+.session-info {
+ display: none;
+ align-items: center;
+ gap: 10px;
+}
+
+.session-info.visible { display: flex; animation: fadeSlideIn 0.4s ease; }
+
+.session-avatar {
+ width: 28px;
+ height: 28px;
+ border-radius: 50%;
+ background: var(--accent-dim);
+ border: 1px solid var(--accent);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 11px;
+ font-weight: 700;
+ color: var(--accent2);
+}
+
+.session-name {
+ font-size: 12px;
+ font-weight: 600;
+ color: var(--text);
+}
+
+.session-role {
+ font-size: 10px;
+ color: var(--text3);
+ font-weight: 400;
+}
+
+/* LAYOUT */
+.layout {
+ display: flex;
+ flex: 1;
+ overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+ width: 220px;
+ border-right: 1px solid var(--border);
+ background: var(--surface);
+ display: flex;
+ flex-direction: column;
+ padding: 20px 12px;
+ gap: 2px;
+ flex-shrink: 0;
+ animation: sidebarIn 0.4s ease;
+}
+
+@keyframes sidebarIn {
+ from { transform: translateX(-10px); opacity: 0; }
+ to { transform: translateX(0); opacity: 1; }
+}
+
+.nav-section {
+ font-size: 9px;
+ font-weight: 700;
+ letter-spacing: 1.5px;
+ text-transform: uppercase;
+ color: var(--text3);
+ padding: 14px 10px 6px;
+}
+
+.nav-section:first-child { padding-top: 0; }
+
+.navbtn {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ padding: 8px 10px;
+ border-radius: 8px;
+ border: none;
+ background: transparent;
+ color: var(--text2);
+ font-family: var(--font);
+ font-size: 12.5px;
+ font-weight: 500;
+ cursor: pointer;
+ transition: var(--transition);
+ text-align: left;
+ width: 100%;
+ position: relative;
+}
+
+.navbtn:hover { background: var(--surface2); color: var(--text); }
+
+.navbtn.active {
+ background: var(--accent-dim);
+ color: var(--accent2);
+}
+
+.navbtn.active::before {
+ content: '';
+ position: absolute;
+ left: 0; top: 20%; bottom: 20%;
+ width: 2px;
+ border-radius: 2px;
+ background: var(--accent);
+ box-shadow: 0 0 8px var(--accent);
+}
+
+.nav-icon {
+ width: 14px;
+ height: 14px;
+ opacity: 0.7;
+}
+
+.navbtn.active .nav-icon { opacity: 1; }
+
+.nav-count {
+ margin-left: auto;
+ font-size: 9px;
+ font-weight: 700;
+ padding: 1px 6px;
+ border-radius: 10px;
+ background: var(--accent-dim);
+ color: var(--accent2);
+ letter-spacing: 0.3px;
+}
+
+/* CONTENT */
+.content {
+ flex: 1;
+ overflow-y: auto;
+ padding: 32px 36px;
+ scroll-behavior: smooth;
+}
+
+.content::-webkit-scrollbar { width: 4px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; animation: panelIn 0.3s ease; }
+
+@keyframes panelIn {
+ from { opacity: 0; transform: translateY(6px); }
+ to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideIn {
+ from { opacity: 0; transform: translateX(8px); }
+ to { opacity: 1; transform: translateX(0); }
+}
+
+/* PAGE TITLE */
+.pg-title {
+ margin-bottom: 28px;
+}
+
+.pg-title h1 {
+ font-size: 22px;
+ font-weight: 700;
+ letter-spacing: -0.3px;
+ color: var(--text);
+ margin-bottom: 4px;
+}
+
+.pg-title p {
+ font-size: 12px;
+ color: var(--text3);
+ font-weight: 400;
+}
+
+/* CARDS GRID */
+.stat-grid {
+ display: grid;
+ grid-template-columns: repeat(4, 1fr);
+ gap: 14px;
+ margin-bottom: 24px;
+}
+
+.stat-card {
+ background: var(--surface);
+ border: 1px solid var(--border);
+ border-radius: var(--radius-lg);
+ padding: 20px;
+ position: relative;
+ overflow: hidden;
+ transition: var(--transition);
+ animation: cardIn 0.4s ease both;
+}
+
+@keyframes cardIn {
+ from { opacity: 0; transform: translateY(12px); }
+ to { opacity: 1; transform: translateY(0); }
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
+.stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+.stat-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+
+.stat-label {
+ font-size: 10px;
+ font-weight: 600;
+ letter-spacing: 1.2px;
+ text-transform: uppercase;
+ color: var(--text3);
+ margin-bottom: 10px;
+}
+
+.stat-value {
+ font-size: 15px;
+ font-weight: 600;
+ color: var(--text);
+ min-height: 22px;
+}
+
+.stat-value.empty { color: var(--text3); font-weight: 400; }
+
+.stat-sub {
+ font-size: 10px;
+ color: var(--text3);
+ margin-top: 4px;
+}
+
+/* SURFACE BLOCKS */
+.block {
+ background: var(--surface);
+ border: 1px solid var(--border);
+ border-radius: var(--radius-lg);
+ overflow: hidden;
+ margin-bottom: 20px;
+}
+
+.block-head {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ padding: 16px 20px;
+ border-bottom: 1px solid var(--border);
+}
+
+.block-head h3 {
+ font-size: 13px;
+ font-weight: 600;
+ color: var(--text);
+}
+
+.block-head p {
+ font-size: 11px;
+ color: var(--text3);
+ margin-top: 2px;
+}
+
+.block-body {
+ padding: 20px;
+}
+
+/* FORM ELEMENTS */
+.form-row {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 14px;
+ margin-bottom: 14px;
+}
+
+.form-row.cols-1 { grid-template-columns: 1fr; }
+.form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field.span2 { grid-column: 1 / -1; }
+
+.field label {
+ font-size: 10px;
+ font-weight: 600;
+ letter-spacing: 1px;
+ text-transform: uppercase;
+ color: var(--text3);
+}
+
+.field input,
+.field select {
+ background: var(--surface2);
+ border: 1px solid var(--border2);
+ border-radius: var(--radius);
+ padding: 9px 13px;
+ color: var(--text);
+ font-family: var(--font);
+ font-size: 13px;
+ font-weight: 400;
+ outline: none;
+ transition: var(--transition);
+ -webkit-appearance: none;
+}
+
+.field input:focus,
+.field select:focus {
+ border-color: var(--accent);
+ background: var(--surface3);
+ box-shadow: 0 0 0 3px rgba(79,110,247,0.1);
+}
+
+.field input::placeholder { color: var(--text3); }
+.field select option { background: #1e2230; }
+
+/* BUTTONS */
+.btn {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ gap: 7px;
+ padding: 9px 18px;
+ border-radius: var(--radius);
+ border: none;
+ font-family: var(--font);
+ font-size: 12.5px;
+ font-weight: 600;
+ cursor: pointer;
+ transition: var(--transition);
+ letter-spacing: 0.2px;
+ white-space: nowrap;
+ position: relative;
+ overflow: hidden;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+ background: var(--accent);
+ color: #fff;
+ box-shadow: 0 2px 12px rgba(79,110,247,0.3);
+}
+
+.btn-primary:hover {
+ background: var(--accent2);
+ box-shadow: 0 4px 20px rgba(79,110,247,0.45);
+}
+
+.btn-secondary {
+ background: var(--surface2);
+ border: 1px solid var(--border2);
+ color: var(--text2);
+}
+
+.btn-secondary:hover { background: var(--surface3); color: var(--text); }
+
+.btn-danger {
+ background: rgba(247,92,92,0.12);
+ border: 1px solid rgba(247,92,92,0.2);
+ color: var(--red);
+}
+
+.btn-danger:hover { background: rgba(247,92,92,0.2); }
+
+.btn-sm { padding: 6px 13px; font-size: 11.5px; }
+
+.btn-row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+
+/* Ripple effect */
+.btn::after {
+ content: '';
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ background: rgba(255,255,255,0.06);
+ opacity: 0;
+ transition: opacity 0.2s;
+}
+
+.btn:hover::after { opacity: 1; }
+
+/* SPINNER */
+.spin {
+ width: 12px; height: 12px;
+ border: 1.5px solid rgba(255,255,255,0.2);
+ border-top-color: #fff;
+ border-radius: 50%;
+ animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* BADGE / TAG */
+.badge {
+ display: inline-flex;
+ align-items: center;
+ gap: 4px;
+ padding: 2px 9px;
+ border-radius: 20px;
+ font-size: 10.5px;
+ font-weight: 600;
+ letter-spacing: 0.2px;
+}
+
+.badge-blue { background: rgba(79,110,247,0.12); color: var(--accent2); border: 1px solid rgba(79,110,247,0.2); }
+.badge-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(46,212,122,0.2); }
+.badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(247,92,92,0.2); }
+.badge-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(240,164,41,0.2); }
+.badge-gray { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid var(--border); }
+
+/* RESPONSE BLOCK */
+.response {
+ display: none;
+ margin-top: 14px;
+ border-radius: var(--radius);
+ padding: 14px 16px;
+ font-family: 'Courier New', monospace;
+ font-size: 11.5px;
+ line-height: 1.7;
+ animation: panelIn 0.25s ease;
+ white-space: pre-wrap;
+ word-break: break-all;
+}
+
+.response.show { display: block; }
+.response.ok { background: var(--green-dim); border: 1px solid rgba(46,212,122,0.2); color: #6ee7aa; }
+.response.err { background: var(--red-dim); border: 1px solid rgba(247,92,92,0.2); color: #f79a9a; }
+.response.neu { background: rgba(79,110,247,0.06); border: 1px solid rgba(79,110,247,0.15); color: var(--accent2); }
+
+/* TABLE */
+.tbl-wrap { overflow-x: auto; }
+
+table {
+ width: 100%;
+ border-collapse: collapse;
+ font-size: 12.5px;
+}
+
+thead th {
+ text-align: left;
+ font-size: 9.5px;
+ font-weight: 700;
+ letter-spacing: 1.2px;
+ text-transform: uppercase;
+ color: var(--text3);
+ padding: 10px 20px;
+ background: var(--surface2);
+ border-bottom: 1px solid var(--border);
+}
+
+tbody td {
+ padding: 12px 20px;
+ border-bottom: 1px solid var(--border);
+ color: var(--text2);
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+tbody tr {
+ transition: var(--transition);
+}
+
+tbody tr:hover td {
+ background: rgba(255,255,255,0.015);
+ color: var(--text);
+}
+
+td strong { color: var(--text); font-weight: 600; }
+
+/* LOG */
+.log-stream {
+ background: #080a0d;
+ border-radius: var(--radius);
+ padding: 16px;
+ height: 380px;
+ overflow-y: auto;
+ font-family: 'Courier New', monospace;
+ font-size: 11.5px;
+}
+
+.log-stream::-webkit-scrollbar { width: 3px; }
+.log-stream::-webkit-scrollbar-thumb { background: var(--surface3); }
+
+.log-line {
+ display: flex;
+ gap: 12px;
+ padding: 3px 0;
+ animation: logIn 0.2s ease;
+ line-height: 1.5;
+}
+
+@keyframes logIn {
+ from { opacity: 0; transform: translateX(-4px); }
+ to { opacity: 1; transform: translateX(0); }
+}
+
+.log-ts { color: var(--text3); min-width: 70px; flex-shrink: 0; font-size: 10px; }
+.log-lvl { min-width: 48px; flex-shrink: 0; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+.log-text { flex: 1; color: var(--text2); }
+
+.log-lvl.INFO { color: var(--accent2); }
+.log-lvl.OK { color: var(--green); }
+.log-lvl.DENY { color: var(--red); }
+.log-lvl.WARN { color: var(--amber); }
+.log-lvl.SYS { color: var(--text3); }
+
+/* SCENARIOS */
+.sc-grid {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 14px;
+ margin-bottom: 20px;
+}
+
+.sc-card {
+ background: var(--surface);
+ border: 1px solid var(--border);
+ border-radius: var(--radius-lg);
+ padding: 18px 20px;
+ transition: var(--transition);
+ cursor: default;
+ animation: cardIn 0.4s ease both;
+}
+
+.sc-card:nth-child(1) { animation-delay: 0.05s; }
+.sc-card:nth-child(2) { animation-delay: 0.10s; }
+.sc-card:nth-child(3) { animation-delay: 0.15s; }
+.sc-card:nth-child(4) { animation-delay: 0.20s; }
+.sc-card:nth-child(5) { animation-delay: 0.25s; }
+.sc-card:nth-child(6) { animation-delay: 0.30s; }
+.sc-card:nth-child(7) { animation-delay: 0.35s; }
+.sc-card:nth-child(8) { animation-delay: 0.40s; }
+
+.sc-card.running {
+ border-color: var(--accent);
+ box-shadow: 0 0 0 1px var(--accent-dim), 0 0 20px rgba(79,110,247,0.1);
+}
+
+.sc-card.passed { border-color: rgba(46,212,122,0.3); }
+.sc-card.failed { border-color: rgba(247,92,92,0.25); }
+
+.sc-top {
+ display: flex;
+ align-items: flex-start;
+ justify-content: space-between;
+ margin-bottom: 10px;
+}
+
+.sc-title { font-size: 12.5px; font-weight: 600; color: var(--text); }
+.sc-desc { font-size: 11px; color: var(--text3); margin-top: 3px; line-height: 1.5; }
+
+.sc-indicator {
+ width: 8px; height: 8px;
+ border-radius: 50%;
+ background: var(--surface3);
+ flex-shrink: 0;
+ margin-top: 4px;
+ transition: var(--transition);
+}
+
+.sc-card.running .sc-indicator { background: var(--accent); animation: dotPulse 0.8s infinite; }
+.sc-card.passed .sc-indicator { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.sc-card.failed .sc-indicator { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+/* LOGIN PAGE */
+.login-wrap {
+ height: 100%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+}
+
+.login-box {
+ width: 380px;
+ animation: loginIn 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes loginIn {
+ from { opacity: 0; transform: translateY(24px) scale(0.97); }
+ to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-header { margin-bottom: 32px; }
+
+.login-header h1 {
+ font-size: 24px;
+ font-weight: 700;
+ letter-spacing: -0.4px;
+ margin-bottom: 6px;
+}
+
+.login-header p {
+ font-size: 12px;
+ color: var(--text3);
+ line-height: 1.6;
+}
+
+.presets-label {
+ font-size: 9.5px;
+ font-weight: 700;
+ letter-spacing: 1.2px;
+ text-transform: uppercase;
+ color: var(--text3);
+ margin-bottom: 10px;
+}
+
+.presets {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 8px;
+ margin-bottom: 22px;
+}
+
+.preset {
+ background: var(--surface2);
+ border: 1px solid var(--border);
+ border-radius: var(--radius);
+ padding: 10px 13px;
+ cursor: pointer;
+ transition: var(--transition);
+ text-align: left;
+ font-family: var(--font);
+}
+
+.preset:hover {
+ border-color: var(--border2);
+ background: var(--surface3);
+}
+
+.preset-name {
+ font-size: 12.5px;
+ font-weight: 600;
+ color: var(--text);
+}
+
+.preset-meta {
+ font-size: 10px;
+ color: var(--text3);
+ margin-top: 2px;
+ line-height: 1.4;
+}
+
+.divider-line {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+ margin: 18px 0;
+}
+
+.divider-line span { font-size: 10px; color: var(--text3); white-space: nowrap; }
+.divider-line::before,
+.divider-line::after {
+ content: '';
+ flex: 1;
+ height: 1px;
+ background: var(--border);
+}
+
+/* SERVER STATUS */
+.srv-grid {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 14px;
+ margin-bottom: 20px;
+}
+
+.srv-card {
+ background: var(--surface);
+ border: 1px solid var(--border);
+ border-radius: var(--radius-lg);
+ padding: 16px 18px;
+ display: flex;
+ align-items: center;
+ gap: 14px;
+ transition: var(--transition);
+}
+
+.srv-card.up { border-left: 2px solid var(--green); }
+.srv-card.down { border-left: 2px solid var(--red); }
+
+.srv-card-icon {
+ width: 36px; height: 36px;
+ background: var(--surface2);
+ border-radius: 8px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+}
+
+.srv-card-icon svg { width: 16px; height: 16px; color: var(--text3); }
+.srv-card.up .srv-card-icon svg { color: var(--green); }
+
+.srv-card-name { font-size: 12.5px; font-weight: 600; }
+.srv-card-port { font-size: 10.5px; color: var(--text3); margin-top: 1px; }
+.srv-card-state { margin-left: auto; font-size: 11px; font-weight: 600; }
+.srv-card.up .srv-card-state { color: var(--green); }
+.srv-card.down .srv-card-state { color: var(--red); }
+
+/* TOAST */
+#toast {
+ position: fixed;
+ bottom: 24px;
+ right: 24px;
+ background: var(--surface);
+ border: 1px solid var(--border2);
+ border-radius: var(--radius);
+ padding: 12px 18px;
+ font-size: 12.5px;
+ font-weight: 500;
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ transform: translateY(70px);
+ opacity: 0;
+ transition: all 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+ z-index: 10000;
+ max-width: 320px;
+ box-shadow: var(--shadow-lg);
+}
+
+#toast.show { transform: translateY(0); opacity: 1; }
+#toast.ok { border-color: rgba(46,212,122,0.3); }
+#toast.err { border-color: rgba(247,92,92,0.3); }
+
+.toast-dot {
+ width: 7px; height: 7px;
+ border-radius: 50%;
+}
+
+#toast.ok .toast-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+#toast.err .toast-dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
+
+/* DIVIDER */
+.sep { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* INLINE USER BAR */
+.user-bar {
+ display: none;
+ background: var(--accent-dim);
+ border: 1px solid rgba(79,110,247,0.18);
+ border-radius: var(--radius-lg);
+ padding: 14px 18px;
+ margin-bottom: 22px;
+ gap: 16px;
+ align-items: center;
+ animation: panelIn 0.3s ease;
+}
+
+.user-bar.show { display: flex; }
+
+.user-bar-avatar {
+ width: 36px; height: 36px;
+ border-radius: 50%;
+ background: var(--accent-dim);
+ border: 1.5px solid var(--accent);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-weight: 700;
+ font-size: 14px;
+ color: var(--accent2);
+ flex-shrink: 0;
+}
+
+.user-bar-name { font-size: 13px; font-weight: 600; }
+.user-bar-meta { font-size: 10.5px; color: var(--text3); margin-top: 1px; }
+
+.token-chip {
+ margin-left: auto;
+ font-family: 'Courier New', monospace;
+ font-size: 10px;
+ color: var(--text3);
+ background: var(--surface2);
+ border: 1px solid var(--border);
+ border-radius: 6px;
+ padding: 3px 10px;
+ max-width: 200px;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ white-space: nowrap;
+}
+
+/* FILTER BUTTONS */
+.filter-btn {
+ padding: 5px 13px;
+ border-radius: 20px;
+ border: 1px solid var(--border2);
+ background: var(--surface2);
+ color: var(--text2);
+ font-family: var(--font);
+ font-size: 11px;
+ font-weight: 600;
+ cursor: pointer;
+ transition: var(--transition);
+}
+.filter-btn:hover { background: var(--surface3); color: var(--text); }
+.filter-btn.active { background: var(--accent-dim); border-color: rgba(79,110,247,0.3); color: var(--accent2); }
+
+/* AUDIT TABLE STATUS */
+.al-ok { color: var(--green); font-weight: 700; }
+.al-fail { color: var(--amber); font-weight: 700; }
+.al-atk { color: var(--red); font-weight: 700; background: var(--red-dim); padding: 2px 7px; border-radius: 4px; font-size: 10px; }
+.al-srv { font-size: 10px; font-family: 'Courier New', monospace; padding: 2px 8px; border-radius: 4px; background: var(--accent-dim); color: var(--accent2); }
+
+.policy-row {
+ display: flex;
+ align-items: flex-start;
+ gap: 16px;
+ padding: 16px 20px;
+ border-bottom: 1px solid var(--border);
+ transition: var(--transition);
+}
+
+.policy-row:last-child { border-bottom: none; }
+.policy-row:hover { background: rgba(255,255,255,0.01); }
+
+.policy-id {
+ font-family: 'Courier New', monospace;
+ font-size: 10px;
+ color: var(--accent2);
+ background: var(--accent-dim);
+ padding: 2px 8px;
+ border-radius: 4px;
+ min-width: 80px;
+ text-align: center;
+ margin-top: 1px;
+}
+
+.policy-desc { font-size: 12.5px; font-weight: 500; color: var(--text); }
+.policy-cond { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+/* LIVE ATTACK LAB */
+.attack-step {
+ display: flex;
+ gap: 16px;
+ padding: 16px 0;
+ border-bottom: 1px solid var(--border);
+ transition: var(--transition);
+}
+.attack-step:last-of-type { border-bottom: none; }
+
+.attack-step-num {
+ font-size: 22px;
+ font-weight: 800;
+ color: var(--border2);
+ min-width: 36px;
+ padding-top: 2px;
+ letter-spacing: -1px;
+ font-variant-numeric: tabular-nums;
+}
+
+.attack-step-body { flex: 1; }
+
+.attack-step-title {
+ font-size: 13px;
+ font-weight: 600;
+ color: var(--text);
+ margin-bottom: 4px;
+}
+
+.attack-step-desc {
+ font-size: 12px;
+ color: var(--text2);
+ margin-bottom: 0;
+ line-height: 1.6;
+}
+
+.attack-step.active { opacity: 1 !important; pointer-events: auto !important; }
+.attack-step.active .attack-step-num { color: var(--accent); }
+
+.code-tag { background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:11px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+ <div class="brand">
+ <div class="brand-mark"><div class="brand-dot"></div></div>
+ <div>
+ <div class="brand-name">SecureCorp</div>
+ </div>
+ <div class="brand-tag">IAM</div>
+ </div>
+
+ <div class="topbar-center">
+ <div class="srv-pill" id="pill-kdc">
+ <div class="srv-dot"></div>
+ KDC :8000
+ </div>
+ <div class="srv-pill" id="pill-pdp">
+ <div class="srv-dot"></div>
+ PDP :8001
+ </div>
+ <div class="srv-pill" id="pill-res">
+ <div class="srv-dot"></div>
+ Resources :8002
+ </div>
+ </div>
+
+ <div class="topbar-right">
+ <div class="session-info" id="sessionInfo">
+ <div class="session-avatar" id="sessAvatar">?</div>
+ <div>
+ <div class="session-name" id="sessName">—</div>
+ <div class="session-role" id="sessRole">—</div>
+ </div>
+ <button class="btn btn-secondary btn-sm" onclick="logout()" style="margin-left:6px">Sign out</button>
+ </div>
+ </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+ <aside class="sidebar">
+ <div class="nav-section">Main</div>
+ <button class="navbtn active" id="nav-auth" onclick="nav('auth')">
+ <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+ Authentication
+ </button>
+ <button class="navbtn" id="nav-dash" onclick="nav('dash')">
+ <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+ Dashboard
+ </button>
+ <button class="navbtn" id="nav-res" onclick="nav('res')">
+ <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+ Resources
+ </button>
+ <div class="nav-section">Security</div>
+ <button class="navbtn" id="nav-atk" onclick="nav('atk')">
+ <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+ Attack Scenarios
+ <span class="nav-count">8</span>
+ </button>
+ <button class="navbtn" id="nav-log" onclick="nav('log')">
+ <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+ Audit Log
+ </button>
+ <button class="navbtn" id="nav-srvlog" onclick="nav('srvlog')">
+ <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M6 8h.01M10 8h4"/></svg>
+ Server Logs
+ </button>
+ <div class="nav-section">Reference</div>
+ <button class="navbtn" id="nav-usr" onclick="nav('usr')">
+ <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+ Users & Roles
+ </button>
+ <button class="navbtn" id="nav-pol" onclick="nav('pol')">
+ <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+ Policies
+ </button>
+ </aside>
+
+ <div class="content">
+
+ <!-- AUTH PANEL -->
+ <div class="panel active" id="panel-auth">
+ <div class="login-wrap">
+ <div class="login-box">
+ <div class="login-header">
+ <h1>Sign In</h1>
+ <p>Authenticate with the Key Distribution Center to receive a Ticket Granting Ticket.</p>
+ </div>
+ <div class="presets-label">Quick select user</div>
+ <div class="presets">
+ <button class="preset" onclick="preset('alice')">
+ <div class="preset-name">alice</div>
+ <div class="preset-meta">Admin · IT · Secret · Internal</div>
+ </button>
+ <button class="preset" onclick="preset('bob')">
+ <div class="preset-name">bob</div>
+ <div class="preset-meta">Manager · Finance · Confidential · Internal</div>
+ </button>
+ <button class="preset" onclick="preset('carol')">
+ <div class="preset-name">carol</div>
+ <div class="preset-meta">Employee · HR · Public · Internal</div>
+ </button>
+ <button class="preset" onclick="preset('dave')">
+ <div class="preset-name">dave</div>
+ <div class="preset-meta">Employee · Finance · Public · External</div>
+ </button>
+ </div>
+ <div class="divider-line"><span>or enter manually</span></div>
+ <div class="form-row cols-1" style="margin-bottom:10px">
+ <div class="field">
+ <label>Username</label>
+ <input type="text" id="loginUser" placeholder="username">
+ </div>
+ </div>
+ <div class="form-row cols-1">
+ <div class="field">
+ <label>Password</label>
+ <input type="password" id="loginPass" value="password123" placeholder="password">
+ </div>
+ </div>
+ <div class="btn-row">
+ <button class="btn btn-primary" id="loginBtn" onclick="doLogin()" style="width:100%;justify-content:center">Authenticate</button>
+ </div>
+ <div id="loginRes" class="response"></div>
+ </div>
+ </div>
+ </div>
+
+ <!-- DASHBOARD PANEL -->
+ <div class="panel" id="panel-dash">
+ <div class="pg-title">
+ <h1>Dashboard</h1>
+ <p>Session overview and infrastructure status</p>
+ </div>
+
+ <div id="userBar" class="user-bar">
+ <div class="user-bar-avatar" id="ubAvatar">?</div>
+ <div>
+ <div class="user-bar-name" id="ubName">—</div>
+ <div class="user-bar-meta" id="ubMeta">—</div>
+ </div>
+ <div class="token-chip" id="ubToken">No ticket</div>
+ <button class="btn btn-secondary btn-sm" onclick="logout()">Sign out</button>
+ </div>
+
+ <div class="stat-grid">
+ <div class="stat-card">
+ <div class="stat-label">Session</div>
+ <div class="stat-value empty" id="dsSess">Not authenticated</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-label">Role</div>
+ <div class="stat-value empty" id="dsRole">—</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-label">Clearance</div>
+ <div class="stat-value empty" id="dsClear">—</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-label">Location</div>
+ <div class="stat-value empty" id="dsLoc">—</div>
+ </div>
+ </div>
+
+ <div class="srv-grid">
+ <div class="srv-card" id="dc-kdc">
+ <div class="srv-card-icon">
+ <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+ </div>
+ <div>
+ <div class="srv-card-name">KDC Server</div>
+ <div class="srv-card-port">localhost:8000</div>
+ </div>
+ <div class="srv-card-state" id="ds-kdc">—</div>
+ </div>
+ <div class="srv-card" id="dc-pdp">
+ <div class="srv-card-icon">
+ <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+ </div>
+ <div>
+ <div class="srv-card-name">Policy Engine</div>
+ <div class="srv-card-port">localhost:8001</div>
+ </div>
+ <div class="srv-card-state" id="ds-pdp">—</div>
+ </div>
+ <div class="srv-card" id="dc-res">
+ <div class="srv-card-icon">
+ <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+ </div>
+ <div>
+ <div class="srv-card-name">Resource Server</div>
+ <div class="srv-card-port">localhost:8002</div>
+ </div>
+ <div class="srv-card-state" id="ds-res">—</div>
+ </div>
+ </div>
+ </div>
+
+ <!-- RESOURCES PANEL -->
+ <div class="panel" id="panel-res">
+ <div class="pg-title">
+ <h1>Resource Access</h1>
+ <p>Request service tickets and access protected resources</p>
+ </div>
+
+ <div class="block">
+ <div class="block-head">
+ <div>
+ <h3>Request Service Ticket</h3>
+ <p>Exchange your TGT for a service-specific ticket</p>
+ </div>
+ </div>
+ <div class="block-body">
+ <div class="form-row">
+ <div class="field">
+ <label>Target Service</label>
+ <input type="text" id="ticketSvc" value="resource_server">
+ </div>
+ <div class="field" style="justify-content:flex-end">
+ <label>&nbsp;</label>
+ <button class="btn btn-primary btn-sm" onclick="doGetTicket()">Request Ticket</button>
+ </div>
+ </div>
+ <div id="ticketRes" class="response"></div>
+ </div>
+ </div>
+
+ <div class="block">
+ <div class="block-head">
+ <div>
+ <h3>Access Resource</h3>
+ <p>Send authenticated request to the resource server</p>
+ </div>
+ </div>
+ <div class="block-body">
+ <div class="form-row cols-3">
+ <div class="field">
+ <label>Resource</label>
+ <select id="resId">
+ <option value="res-001">res-001 — HR Policy (confidential)</option>
+ <option value="res-002">res-002 — Finance Report Q4 (secret)</option>
+ <option value="res-003">res-003 — IT Network Diagram (secret)</option>
+ <option value="res-004">res-004 — Company Handbook (public)</option>
+ <option value="res-005">res-005 — Salary Database (secret)</option>
+ <option value="res-006">res-006 — Operations Manual (confidential)</option>
+ </select>
+ </div>
+ <div class="field">
+ <label>Method</label>
+ <select id="resMethod">
+ <option value="GET">GET — Read</option>
+ <option value="DELETE">DELETE — Remove</option>
+ </select>
+ </div>
+ <div class="field" style="justify-content:flex-end">
+ <label>&nbsp;</label>
+ <button class="btn btn-primary btn-sm" onclick="doAccessResource()">Send Request</button>
+ </div>
+ </div>
+ <div id="resResult" class="response"></div>
+ </div>
+ </div>
+
+ <div class="block">
+ <div class="block-head">
+ <div>
+ <h3>Create Resource</h3>
+ <p>POST a new resource — requires write permission</p>
+ </div>
+ </div>
+ <div class="block-body">
+ <div class="form-row cols-3">
+ <div class="field">
+ <label>Name</label>
+ <input type="text" id="crName" placeholder="Resource name">
+ </div>
+ <div class="field">
+ <label>Department</label>
+ <select id="crDept">
+ <option>IT</option><option>Finance</option><option>HR</option><option>Operations</option>
+ </select>
+ </div>
+ <div class="field">
+ <label>Classification</label>
+ <select id="crClass">
+ <option value="public">Public</option>
+ <option value="confidential">Confidential</option>
+ <option value="secret">Secret</option>
+ </select>
+ </div>
+ </div>
+ <button class="btn btn-primary btn-sm" onclick="doCreateResource()">Create</button>
+ <div id="crResult" class="response"></div>
+ </div>
+ </div>
+ </div>
+
+ <!-- ATTACKS PANEL -->
+ <div class="panel" id="panel-atk">
+ <div class="pg-title">
+ <h1>Attack Scenarios</h1>
+ <p>Security control validation against common attack vectors</p>
+ </div>
+ <div class="btn-row" style="margin-bottom:24px;margin-top:0">
+ <button class="btn btn-primary" onclick="runAll()">Run All Scenarios</button>
+ <button class="btn btn-secondary" onclick="resetAll()">Reset</button>
+ </div>
+
+ <!-- LIVE ATTACK LAB 1: REPLAY ATTACK -->
+ <div class="block" style="margin-bottom:28px;border:1px solid rgba(247,92,92,0.3);background:rgba(247,92,92,0.05);">
+ <div class="block-head" style="border-bottom:1px solid rgba(247,92,92,0.15);">
+ <div>
+ <h3 style="color:var(--red)"> Live Attack Lab — Replay Attack</h3>
+ <p>3 étapes réelles contre le KDC (port 8000). Tu choisis toi-même : envoyer un nonce propre ou le rejouer.</p>
+ </div>
+ </div>
+ <div class="block-body">
+
+ <!-- STEP 1 -->
+ <div class="attack-step active" id="lab-step1">
+ <div class="attack-step-num">01</div>
+ <div class="attack-step-body">
+ <div class="attack-step-title">Login → Obtenir un TGT</div>
+ <div class="attack-step-desc">Appelle <code class="code-tag">POST /login</code> sur le KDC. Tu reçois un TGT signé.</div>
+ <div class="form-row" style="margin-top:12px">
+ <div class="field">
+ <label>Utilisateur</label>
+ <select id="lab-user">
+ <option value="alice">alice (Admin)</option>
+ <option value="bob" selected>bob (Manager)</option>
+ <option value="carol">carol (Employee)</option>
+ </select>
+ </div>
+ <div class="field" style="justify-content:flex-end"><label>&nbsp;</label>
+ <button class="btn btn-primary btn-sm" onclick="labStep1()">→ POST /login</button>
+ </div>
+ </div>
+ <div id="lab-r1" class="response"></div>
+ </div>
+ </div>
+
+ <!-- STEP 2 -->
+ <div class="attack-step" id="lab-step2" style="opacity:0.3;pointer-events:none">
+ <div class="attack-step-num">02</div>
+ <div class="attack-step-body">
+ <div class="attack-step-title">Demande de ticket — choisis ton nonce</div>
+ <div class="attack-step-desc">
+ Entre un nonce manuellement. Envoie une première requête <strong style="color:var(--green)">légitime</strong>.
+ Puis tu peux choisir : <strong style="color:var(--amber)">changer le nonce</strong> (requête normale) ou <strong style="color:var(--red)">garder le même</strong> (replay attack).
+ </div>
+ <div class="form-row" style="margin-top:12px;align-items:flex-end">
+ <div class="field" style="flex:2">
+ <label>Nonce <span style="color:var(--text3);font-weight:400">(identifiant unique de la requête)</span></label>
+ <input type="text" id="lab-nonce" placeholder="ex: test123" autocomplete="off" style="font-family:monospace">
+ </div>
+ <div class="field" style="flex:0;gap:8px;flex-direction:row;align-items:flex-end">
+ <button class="btn btn-sm" onclick="labSend()" style="background:var(--green);color:#000;border:none;white-space:nowrap"> Envoyer ce nonce</button>
+ <button class="btn btn-sm" onclick="labNewNonce()" style="background:rgba(255,255,255,0.07);border:1px solid var(--border2);color:var(--text2);white-space:nowrap"> Nonce aléatoire</button>
+ </div>
+ </div>
+ <div id="lab-r2" class="response"></div>
+ <!-- After first send, replay button appears -->
+ <div id="lab-replay-zone" style="display:none;margin-top:12px;padding:14px;background:rgba(247,92,92,0.07);border:1px solid rgba(247,92,92,0.3);border-radius:8px;">
+ <div style="font-size:12px;color:var(--text2);margin-bottom:10px">
+ <strong style="color:var(--red)">Attaque :</strong> Le nonce <code id="lab-used-nonce" style="color:var(--red);background:rgba(247,92,92,0.15);padding:1px 6px;border-radius:4px"></code> est déjà enregistré dans le KDC.
+ Clique ci-dessous pour le <strong>renvoyer exactement pareil</strong> → le KDC doit rejeter avec 401.
+ </div>
+ <button class="btn btn-sm" onclick="labReplay()" style="background:var(--red);color:#fff;border:none;cursor:pointer"> Rejouer (même nonce) → ATTACK</button>
+ <div id="lab-r3" class="response" style="margin-top:8px"></div>
+ </div>
+ </div>
+ </div>
+
+ <div id="lab-banner" style="display:none;margin-top:12px;padding:14px 18px;border-radius:10px;border:1px solid rgba(46,212,122,0.3);background:rgba(46,212,122,0.07);">
+ <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:3px"> Replay Attack détectée et bloquée par le KDC</div>
+ <div style="font-size:12px;color:var(--text2)">Le serveur stocke chaque nonce dans <code>USED_NONCES</code>. Toute réutilisation → HTTP 401 immédiat.</div>
+ </div>
+ </div>
+ </div>
+
+ <!-- LIVE ATTACK LAB 2: TICKET TAMPERING -->
+ <div class="block" style="margin-bottom:28px;border:1px solid rgba(240,164,41,0.3);background:rgba(240,164,41,0.04);">
+ <div class="block-head" style="border-bottom:1px solid rgba(240,164,41,0.15);">
+ <div>
+ <h3 style="color:var(--amber)"> Live Attack Lab — Ticket Tampering</h3>
+ <p>Obtiens un vrai JWT du KDC. Envoie-le intact ou falsifié au Resource Server (port 8002).</p>
+ </div>
+ </div>
+ <div class="block-body">
+
+ <div class="attack-step active" id="tamp-step1">
+ <div class="attack-step-num">01</div>
+ <div class="attack-step-body">
+ <div class="attack-step-title">Obtenir un ticket JWT légitime depuis le KDC</div>
+ <div class="attack-step-desc">Appelle <code class="code-tag">POST /login</code> + <code class="code-tag">POST /request-ticket</code>. Tu obtiens un JWT signé HMAC-SHA256.</div>
+ <div class="form-row" style="margin-top:12px">
+ <div class="field">
+ <label>Utilisateur</label>
+ <select id="tamp-user">
+ <option value="carol" selected>carol (Employee / clearance: public)</option>
+ <option value="dave">dave (Employee / External)</option>
+ <option value="bob">bob (Manager / Finance)</option>
+ </select>
+ </div>
+ <div class="field" style="justify-content:flex-end"><label>&nbsp;</label>
+ <button class="btn btn-primary btn-sm" onclick="tampStep1()">→ Obtenir Ticket</button>
+ </div>
+ </div>
+ <div id="tamp-r1" class="response"></div>
+ </div>
+ </div>
+
+ <div class="attack-step" id="tamp-step2" style="opacity:0.3;pointer-events:none">
+ <div class="attack-step-num">02</div>
+ <div class="attack-step-body">
+ <div class="attack-step-title">Envoie le ticket — intact ou falsifié — au Resource Server</div>
+ <div class="attack-step-desc">
+ Le ticket ci-dessous est le vrai JWT. Envoie-le <strong style="color:var(--green)">intact</strong> (requête légitime) ou <strong style="color:var(--red)">falsifié</strong> (attaque).
+ </div>
+ <textarea id="tamp-ticket-edit" style="width:100%;height:68px;background:rgba(0,0,0,0.45);border:1px solid rgba(240,164,41,0.35);border-radius:8px;color:#f0c060;font-family:monospace;font-size:10px;padding:10px;resize:vertical;margin:10px 0;line-height:1.5;"></textarea>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+ <button class="btn btn-sm" onclick="tampCorruptSig()" style="background:rgba(247,92,92,0.12);border:1px solid rgba(247,92,92,0.4);color:var(--red);"> Corrompre Signature</button>
+ 
+ <button class="btn btn-sm" onclick="tampReset()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text3);">Remettre l'original</button>
+ </div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap">
+ <button class="btn btn-sm" onclick="tampSend('res-001')" style="background:var(--green);color:#000;border:none;cursor:pointer"> Envoyer intact → GET /resource/res-001</button>
+ <button class="btn btn-sm" onclick="tampSend('res-002')" style="background:rgba(79,110,247,0.8);color:#fff;border:none;cursor:pointer"> Envoyer → GET /resource/res-002 (secret)</button>
+ </div>
+ <div id="tamp-r2" class="response" style="margin-top:10px"></div>
+ <div id="tamp-banner" style="display:none;margin-top:12px;padding:14px 18px;border-radius:10px;border:1px solid rgba(46,212,122,0.3);background:rgba(46,212,122,0.07);">
+ <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:3px"> Falsification détectée — JWT invalide rejeté</div>
+ <div style="font-size:12px;color:var(--text2)">La vérification HMAC-SHA256 échoue dès qu'un seul caractère est modifié. Le Resource Server retourne HTTP 401.</div>
+ </div>
+ </div>
+ </div>
+
+ </div>
+ </div>
+
+ <!-- LIVE ATTACK LAB 3: PRIVILEGE ESCALATION -->
+ <div class="block" style="margin-bottom:28px;border:1px solid rgba(79,110,247,0.3);background:rgba(79,110,247,0.04);">
+ <div class="block-head" style="border-bottom:1px solid rgba(79,110,247,0.15);">
+ <div>
+ <h3 style="color:var(--accent2)"> Live Attack Lab — Escalade de Privilèges</h3>
+ <p>Connecte-toi avec un utilisateur limité, récupère un ticket réel, puis tente une action interdite sur le Resource Server.</p>
+ </div>
+ </div>
+ <div class="block-body">
+ <div class="attack-step active">
+ <div class="attack-step-num">01</div>
+ <div class="attack-step-body">
+ <div class="attack-step-title">Choisir l'utilisateur et l'action à tenter</div>
+ <div class="attack-step-desc">Le ticket sera obtenu automatiquement via le KDC. L'action sera envoyée au Resource Server.</div>
+ <div class="form-row" style="margin-top:12px">
+ <div class="field">
+ <label>Utilisateur</label>
+ <select id="priv-user" onchange="privUpdateHint()">
+ <option value="carol">carol — Employee (READ seulement)</option>
+ <option value="bob">bob — Manager (pas de DELETE)</option>
+ <option value="dave">dave — Employee External</option>
+ </select>
+ </div>
+ <div class="field">
+ <label>Action à tenter</label>
+ <select id="priv-action" onchange="privUpdateHint()">
+ <option value="DELETE:res-004">DELETE res-004 (public)</option>
+ <option value="READ:res-002">READ res-002 (Finance secret)</option>
+ <option value="READ:res-003">READ res-003 (IT secret)</option>
+ <option value="BRUTE">Brute Force Login (3× mauvais MDP)</option>
+ </select>
+ </div>
+ <div class="field" style="justify-content:flex-end"><label>&nbsp;</label>
+ <button class="btn btn-sm" onclick="privRun()" style="background:var(--accent);color:#fff;border:none;cursor:pointer;padding:8px 18px;"> Lancer</button>
+ </div>
+ </div>
+ <div id="priv-hint" style="font-size:11px;color:var(--text3);margin:6px 0 0;padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:6px;border-left:2px solid var(--border2)"></div>
+ <div id="priv-result" class="response"></div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="sc-grid" id="scGrid">
+
+ <div class="sc-card" id="sc1">
+ <div class="sc-top">
+ <div>
+ <div class="sc-title">Valid Access</div>
+ <div class="sc-desc">Alice (Admin) reads the public Company Handbook. Expected: ALLOW.</div>
+ </div>
+ <div class="sc-indicator"></div>
+ </div>
+ <button class="btn btn-secondary btn-sm" onclick="runSc(1)">Run</button>
+ <div id="scr1" class="response"></div>
+ </div>
+
+ <div class="sc-card" id="sc2">
+ <div class="sc-top">
+ <div>
+ <div class="sc-title">Insufficient Clearance</div>
+ <div class="sc-desc">Carol (public clearance) requests a secret Finance document. Expected: DENY.</div>
+ </div>
+ <div class="sc-indicator"></div>
+ </div>
+ <button class="btn btn-secondary btn-sm" onclick="runSc(2)">Run</button>
+ <div id="scr2" class="response"></div>
+ </div>
+
+ <div class="sc-card" id="sc3">
+ <div class="sc-top">
+ <div>
+ <div class="sc-title">External Location Blocked</div>
+ <div class="sc-desc">Dave (external) requests a secret resource. ABAC policy-1 blocks. Expected: DENY.</div>
+ </div>
+ <div class="sc-indicator"></div>
+ </div>
+ <button class="btn btn-secondary btn-sm" onclick="runSc(3)">Run</button>
+ <div id="scr3" class="response"></div>
+ </div>
+
+ <div class="sc-card" id="sc4">
+ <div class="sc-top">
+ <div>
+ <div class="sc-title">Replay Attack</div>
+ <div class="sc-desc">Nonce is reused to replay a ticket request. KDC nonce store blocks it. Expected: 401.</div>
+ </div>
+ <div class="sc-indicator"></div>
+ </div>
+ <button class="btn btn-secondary btn-sm" onclick="runSc(4)">Run</button>
+ <div id="scr4" class="response"></div>
+ </div>
+
+ <div class="sc-card" id="sc5">
+ <div class="sc-top">
+ <div>
+ <div class="sc-title">Ticket Tampering</div>
+ <div class="sc-desc">JWT signature is corrupted before presenting to the resource server. Expected: 401.</div>
+ </div>
+ <div class="sc-indicator"></div>
+ </div>
+ <button class="btn btn-secondary btn-sm" onclick="runSc(5)">Run</button>
+ <div id="scr5" class="response"></div>
+ </div>
+
+ <div class="sc-card" id="sc6">
+ <div class="sc-top">
+ <div>
+ <div class="sc-title">Privilege Escalation</div>
+ <div class="sc-desc">Carol (Employee) attempts a DELETE operation. RBAC blocks. Expected: 403.</div>
+ </div>
+ <div class="sc-indicator"></div>
+ </div>
+ <button class="btn btn-secondary btn-sm" onclick="runSc(6)">Run</button>
+ <div id="scr6" class="response"></div>
+ </div>
+
+ <div class="sc-card" id="sc7">
+ <div class="sc-top">
+ <div>
+ <div class="sc-title">Invalid Credentials</div>
+ <div class="sc-desc">Login attempt with wrong password. KDC rejects. Expected: 401.</div>
+ </div>
+ <div class="sc-indicator"></div>
+ </div>
+ <button class="btn btn-secondary btn-sm" onclick="runSc(7)">Run</button>
+ <div id="scr7" class="response"></div>
+ </div>
+
+ <div class="sc-card" id="sc8">
+ <div class="sc-top">
+ <div>
+ <div class="sc-title">Authorized Manager Access</div>
+ <div class="sc-desc">Bob (Manager/Finance) reads a Finance secret document. Expected: ALLOW or DENY per clearance.</div>
+ </div>
+ <div class="sc-indicator"></div>
+ </div>
+ <button class="btn btn-secondary btn-sm" onclick="runSc(8)">Run</button>
+ <div id="scr8" class="response"></div>
+ </div>
+
+ </div>
+ </div>
+
+ <!-- LOG PANEL -->
+ <div class="panel" id="panel-log">
+ <div class="pg-title">
+ <h1>Audit Log</h1>
+ <p>Events from the KDC server — login attempts, tickets, policy decisions, attacks</p>
+ </div>
+
+ <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+ <div class="stat-card">
+ <div class="stat-label">Total Events</div>
+ <div class="stat-value" id="al-total">—</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-label">Allowed</div>
+ <div class="stat-value" id="al-ok" style="color:var(--green)">—</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-label">Denied</div>
+ <div class="stat-value" id="al-deny" style="color:var(--red)">—</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-label">Attacks Detected</div>
+ <div class="stat-value" id="al-atk" style="color:var(--amber)">—</div>
+ </div>
+ </div>
+
+ <div class="block">
+ <div class="block-head">
+ <div>
+ <h3>Audit Event Stream</h3>
+ <p>Fetched live from KDC /audit-log — last 100 entries</p>
+ </div>
+ <div style="display:flex;gap:8px;align-items:center">
+ <div id="al-autoLabel" style="font-size:10px;color:var(--text3)">Auto-refresh: ON</div>
+ <button class="btn btn-secondary btn-sm" onclick="toggleAuditAuto()">Pause</button>
+ <button class="btn btn-secondary btn-sm" onclick="fetchAuditLog()">Refresh</button>
+ <button class="btn btn-secondary btn-sm" onclick="clearAuditFilter()">All</button>
+ </div>
+ </div>
+
+ <div style="display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap">
+ <button class="filter-btn active" data-f="ALL" onclick="setAuditFilter('ALL',this)">All</button>
+ <button class="filter-btn" data-f="OK" onclick="setAuditFilter('OK',this)">OK</button>
+ <button class="filter-btn" data-f="FAIL" onclick="setAuditFilter('FAIL',this)">FAIL</button>
+ <button class="filter-btn" data-f="ATTACK" onclick="setAuditFilter('ATTACK',this)">ATTACK</button>
+ <button class="filter-btn" data-f="KDC" onclick="setAuditFilter('KDC',this)">KDC</button>
+ <button class="filter-btn" data-f="PDP" onclick="setAuditFilter('PDP',this)">PDP</button>
+ <button class="filter-btn" data-f="ResourceServer" onclick="setAuditFilter('ResourceServer',this)">Resource</button>
+ </div>
+
+ <div class="block-body" style="padding:0">
+ <div id="auditTable" style="overflow-x:auto">
+ <table>
+ <thead>
+ <tr>
+ <th style="min-width:80px">Time</th>
+ <th style="min-width:100px">Server</th>
+ <th style="min-width:110px">Event</th>
+ <th style="min-width:80px">User</th>
+ <th style="min-width:70px">Status</th>
+ <th>Detail</th>
+ </tr>
+ </thead>
+ <tbody id="auditTbody">
+ <tr><td colspan="6" style="text-align:center;color:var(--text3);padding:32px">Click Refresh or wait for auto-refresh…</td></tr>
+ </tbody>
+ </table>
+ </div>
+ </div>
+ </div>
+
+ <div class="block">
+ <div class="block-head">
+ <h3>Platform Event Stream</h3>
+ <button class="btn btn-secondary btn-sm" onclick="clearLog()">Clear</button>
+ </div>
+ <div class="block-body" style="padding:0">
+ <div class="log-stream" id="logStream">
+ <div class="log-line">
+ <span class="log-ts">--:--:--</span>
+ <span class="log-lvl SYS">SYS</span>
+ <span class="log-text">Platform initialized.</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- SERVER LOGS PANEL -->
+ <div class="panel" id="panel-srvlog">
+ <div class="pg-title">
+ <h1>Server Logs</h1>
+ <p>Raw structured logs per server component</p>
+ </div>
+
+ <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+ <button class="filter-btn active" id="srvtab-kdc" onclick="setSrvTab('kdc')">KDC :8000</button>
+ <button class="filter-btn" id="srvtab-pdp" onclick="setSrvTab('pdp')">PDP :8001</button>
+ <button class="filter-btn" id="srvtab-res" onclick="setSrvTab('res')">Resource :8002</button>
+ <div style="margin-left:auto;display:flex;gap:8px">
+ <div id="sl-autoLabel" style="font-size:10px;color:var(--text3);align-self:center">Auto-refresh: ON</div>
+ <button class="btn btn-secondary btn-sm" onclick="toggleSrvAuto()">Pause</button>
+ <button class="btn btn-secondary btn-sm" onclick="fetchSrvLog()">Refresh</button>
+ </div>
+ </div>
+
+ <div class="block">
+ <div class="block-head">
+ <div>
+ <h3 id="srvLogTitle">KDC Log</h3>
+ <p id="srvLogSub">Authentication server events</p>
+ </div>
+ <span id="srvLogCount" class="badge badge-gray">0 lines</span>
+ </div>
+ <div class="block-body" style="padding:0">
+ <div class="log-stream" id="srvLogStream" style="height:500px">
+ <div class="log-line">
+ <span class="log-ts">--:--:--</span>
+ <span class="log-lvl SYS">SYS</span>
+ <span class="log-text">Select a server tab and click Refresh to load logs.</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- USERS PANEL -->
+ <div class="panel" id="panel-usr">
+ <div class="pg-title">
+ <h1>Users & Roles</h1>
+ <p>RBAC + ABAC user directory and permissions matrix</p>
+ </div>
+ <div class="block">
+ <div class="block-head">
+ <h3>User Directory</h3>
+ <span class="badge badge-gray">4 users</span>
+ </div>
+ <div class="tbl-wrap">
+ <table>
+ <thead>
+ <tr>
+ <th>User</th><th>Role</th><th>Department</th>
+ <th>Clearance</th><th>Location</th><th>Permissions</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td><strong>alice</strong></td>
+ <td><span class="badge badge-blue">Admin</span></td>
+ <td>IT</td>
+ <td><span class="badge badge-red">Secret</span></td>
+ <td><span class="badge badge-green">Internal</span></td>
+ <td><span class="badge badge-gray">read</span> <span class="badge badge-gray">write</span> <span class="badge badge-gray">delete</span></td>
+ </tr>
+ <tr>
+ <td><strong>bob</strong></td>
+ <td><span class="badge badge-blue">Manager</span></td>
+ <td>Finance</td>
+ <td><span class="badge badge-amber">Confidential</span></td>
+ <td><span class="badge badge-green">Internal</span></td>
+ <td><span class="badge badge-gray">read</span> <span class="badge badge-gray">write</span></td>
+ </tr>
+ <tr>
+ <td><strong>carol</strong></td>
+ <td><span class="badge badge-gray">Employee</span></td>
+ <td>HR</td>
+ <td><span class="badge badge-green">Public</span></td>
+ <td><span class="badge badge-green">Internal</span></td>
+ <td><span class="badge badge-gray">read</span></td>
+ </tr>
+ <tr>
+ <td><strong>dave</strong></td>
+ <td><span class="badge badge-gray">Employee</span></td>
+ <td>Finance</td>
+ <td><span class="badge badge-green">Public</span></td>
+ <td><span class="badge badge-red">External</span></td>
+ <td><span class="badge badge-gray">read</span></td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ </div>
+ <div class="block">
+ <div class="block-head"><h3>RBAC Permissions Matrix</h3></div>
+ <div class="tbl-wrap">
+ <table>
+ <thead><tr><th>Role</th><th>Read</th><th>Write</th><th>Delete</th></tr></thead>
+ <tbody>
+ <tr>
+ <td><span class="badge badge-blue">Admin</span></td>
+ <td style="color:var(--green);font-weight:600">Allowed</td>
+ <td style="color:var(--green);font-weight:600">Allowed</td>
+ <td style="color:var(--green);font-weight:600">Allowed</td>
+ </tr>
+ <tr>
+ <td><span class="badge badge-blue">Manager</span></td>
+ <td style="color:var(--green);font-weight:600">Allowed</td>
+ <td style="color:var(--green);font-weight:600">Allowed</td>
+ <td style="color:var(--red);font-weight:600">Denied</td>
+ </tr>
+ <tr>
+ <td><span class="badge badge-gray">Employee</span></td>
+ <td style="color:var(--green);font-weight:600">Allowed</td>
+ <td style="color:var(--red);font-weight:600">Denied</td>
+ <td style="color:var(--red);font-weight:600">Denied</td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ </div>
+ </div>
+
+ <!-- POLICIES PANEL -->
+ <div class="panel" id="panel-pol">
+ <div class="pg-title">
+ <h1>Security Policies</h1>
+ <p>ABAC policy rules evaluated by the Policy Decision Point</p>
+ </div>
+ <div class="block">
+ <div class="block-head">
+ <h3>Active Policies</h3>
+ <span class="badge badge-green">3 active</span>
+ </div>
+ <div class="policy-row">
+ <div class="policy-id">policy-1</div>
+ <div>
+ <div class="policy-desc">External location blocked for secret resources</div>
+ <div class="policy-cond">classification = secret AND location = external → DENY</div>
+ </div>
+ <span class="badge badge-red" style="margin-left:auto;flex-shrink:0">Deny</span>
+ </div>
+ <div class="policy-row">
+ <div class="policy-id">policy-2</div>
+ <div>
+ <div class="policy-desc">Department isolation — non-public cross-department access</div>
+ <div class="policy-cond">user.dept ≠ resource.dept AND classification ≠ public → DENY</div>
+ </div>
+ <span class="badge badge-red" style="margin-left:auto;flex-shrink:0">Deny</span>
+ </div>
+ <div class="policy-row">
+ <div class="policy-id">policy-3</div>
+ <div>
+ <div class="policy-desc">Clearance level enforcement</div>
+ <div class="policy-cond">user.clearance_level &lt; resource.classification_level → DENY</div>
+ </div>
+ <span class="badge badge-red" style="margin-left:auto;flex-shrink:0">Deny</span>
+ </div>
+ </div>
+ <div class="block">
+ <div class="block-head"><h3>Admin Bypass</h3></div>
+ <div class="policy-row">
+ <div class="policy-id">admin-bypass</div>
+ <div>
+ <div class="policy-desc">Admin role bypasses all ABAC policies after RBAC check passes</div>
+ <div class="policy-cond">role = Admin → Skip all ABAC, return ALLOW</div>
+ </div>
+ <span class="badge badge-green" style="margin-left:auto;flex-shrink:0">Allow</span>
+ </div>
+ </div>
+ </div>
+
+ </div><!-- .content -->
+</div><!-- .layout -->
+
+<div id="toast">
+ <div class="toast-dot"></div>
+ <span id="toastMsg"></span>
+</div>
+
+<script>
+const KDC = 'http://localhost:8000';
+const PDP = 'http://localhost:8001';
+const RES = 'http://localhost:8002';
+
+let S = { tgt: null, ticket: null, user: null };
+
+// NAV 
+function nav(p) {
+ document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+ document.querySelectorAll('.navbtn').forEach(x => x.classList.remove('active'));
+ document.getElementById('panel-' + p).classList.add('active');
+ document.getElementById('nav-' + p).classList.add('active');
+ if (p === 'dash') checkServers();
+ if (p === 'log') fetchAuditLog();
+ if (p === 'srvlog') fetchSrvLog();
+}
+
+// PRESET 
+function preset(u) {
+ document.getElementById('loginUser').value = u;
+ document.getElementById('loginPass').value = 'password123';
+}
+
+// LOGIN 
+async function doLogin() {
+ const user = document.getElementById('loginUser').value.trim();
+ const pass = document.getElementById('loginPass').value.trim();
+ if (!user) { toast('Enter a username', 'err'); return; }
+ const btn = document.getElementById('loginBtn');
+ btn.innerHTML = '<span class="spin"></span> Authenticating...';
+ btn.disabled = true;
+ const res = document.getElementById('loginRes');
+ try {
+ const r = await fetch(KDC + '/login', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ username: user, password: pass })
+ });
+ const d = await r.json();
+ if (!r.ok) {
+ showRes(res, 'DENIED — ' + (d.detail || 'Authentication failed'), 'err');
+ log('AUTH', 'DENY', user + ' — ' + (d.detail || 'failed'));
+ toast(d.detail || 'Authentication failed', 'err');
+ } else {
+ S.tgt = d.tgt;
+ try {
+ const p2 = JSON.parse(atob(d.tgt.split('.')[1]));
+ S.user = p2;
+ } catch(e) { S.user = { username: user }; }
+ showRes(res, 'TGT issued — ' + user, 'ok');
+ log('AUTH', 'OK', 'TGT issued for ' + user + ' [' + (S.user.role||'?') + ']');
+ toast('Authenticated as ' + user, 'ok');
+ await getTicketAuto();
+ updateUI();
+ setTimeout(() => nav('dash'), 600);
+ }
+ } catch(e) {
+ showRes(res, 'KDC unreachable — start python kdc.py', 'err');
+ log('AUTH', 'WARN', 'KDC not reachable');
+ }
+ btn.innerHTML = 'Authenticate';
+ btn.disabled = false;
+}
+
+async function getTicketAuto() {
+ if (!S.tgt) return;
+ try {
+ const nonce = crypto.randomUUID();
+ const r = await fetch(KDC + '/request-ticket', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tgt: S.tgt, service: 'resource_server', nonce })
+ });
+ const d = await r.json();
+ if (r.ok && d.service_ticket) {
+ S.ticket = d.service_ticket;
+ log('TICKET', 'OK', 'Service ticket issued');
+ }
+ } catch(e) {}
+}
+
+async function doGetTicket() {
+ if (!S.tgt) { toast('Login first', 'err'); return; }
+ const svc = document.getElementById('ticketSvc').value;
+ const res = document.getElementById('ticketRes');
+ try {
+ const nonce = crypto.randomUUID();
+ const r = await fetch(KDC + '/request-ticket', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tgt: S.tgt, service: svc, nonce })
+ });
+ const d = await r.json();
+ if (r.ok) {
+ S.ticket = d.service_ticket;
+ showRes(res, 'Service ticket issued\n' + S.ticket.substring(0,90) + '...', 'ok');
+ log('TICKET', 'OK', 'Issued for service=' + svc);
+ updateUI();
+ } else {
+ showRes(res, 'FAILED — ' + (d.detail||'error'), 'err');
+ log('TICKET', 'DENY', d.detail||'error');
+ }
+ } catch(e) { showRes(res, 'KDC unreachable', 'err'); }
+}
+
+async function doAccessResource() {
+ if (!S.ticket) { toast('Request a service ticket first', 'err'); return; }
+ const id = document.getElementById('resId').value;
+ const method = document.getElementById('resMethod').value;
+ const res = document.getElementById('resResult');
+ try {
+ const r = await fetch(RES + '/resource/' + id, {
+ method,
+ headers: { 'Authorization': 'Bearer ' + S.ticket }
+ });
+ const d = await r.json();
+ if (r.ok) {
+ showRes(res, 'ALLOW\n' + JSON.stringify(d, null, 2), 'ok');
+ log('ACCESS', 'OK', method + ' ' + id + ' by ' + S.user?.username);
+ toast('Access granted', 'ok');
+ } else {
+ showRes(res, 'DENY\n' + (d.detail||''), 'err');
+ log('ACCESS', 'DENY', method + ' ' + id + ' — ' + (d.detail||''));
+ toast('Access denied', 'err');
+ }
+ } catch(e) { showRes(res, 'Resource server unreachable', 'err'); }
+}
+
+async function doCreateResource() {
+ if (!S.ticket) { toast('Request a service ticket first', 'err'); return; }
+ const body = {
+ name: document.getElementById('crName').value,
+ department: document.getElementById('crDept').value,
+ classification: document.getElementById('crClass').value,
+ };
+ const res = document.getElementById('crResult');
+ try {
+ const r = await fetch(RES + '/resource', {
+ method: 'POST',
+ headers: { 'Authorization': 'Bearer ' + S.ticket, 'Content-Type': 'application/json' },
+ body: JSON.stringify(body)
+ });
+ const d = await r.json();
+ if (r.ok) {
+ showRes(res, 'Created ' + d.created, 'ok');
+ log('CREATE', 'OK', 'Resource ' + d.created + ' created by ' + S.user?.username);
+ toast('Resource created', 'ok');
+ } else {
+ showRes(res, 'DENY — ' + (d.detail||''), 'err');
+ log('CREATE', 'DENY', d.detail||'');
+ }
+ } catch(e) { showRes(res, 'Resource server unreachable', 'err'); }
+}
+
+// SCENARIOS 
+async function loginAs(u) {
+ const r = await fetch(KDC + '/login', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ username: u, password: 'password123' })
+ });
+ const d = await r.json();
+ return r.ok ? d.tgt : null;
+}
+
+async function ticketFor(tgt) {
+ const nonce = crypto.randomUUID();
+ const r = await fetch(KDC + '/request-ticket', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tgt, service: 'resource_server', nonce })
+ });
+ const d = await r.json();
+ return { ok: r.ok, ticket: d.service_ticket, nonce };
+}
+
+async function runSc(n) {
+ const card = document.getElementById('sc' + n);
+ const out = document.getElementById('scr' + n);
+ card.className = 'sc-card running';
+ out.className = 'response';
+ await delay(200);
+ try {
+ let pass = false, txt = '';
+
+ if (n === 1) {
+ const tgt = await loginAs('alice');
+ const { ticket } = await ticketFor(tgt);
+ const r = await fetch(RES + '/resource/res-004', { headers: { Authorization: 'Bearer ' + ticket } });
+ const d = await r.json();
+ pass = r.ok;
+ txt = pass ? 'ALLOW\n' + JSON.stringify(d.resource, null, 2) : 'DENY — ' + d.detail;
+ log('SC1', pass ? 'OK' : 'DENY', 'Alice reads public handbook — ' + (pass ? 'ALLOW' : 'DENY'));
+ }
+ else if (n === 2) {
+ const tgt = await loginAs('carol');
+ const { ticket } = await ticketFor(tgt);
+ const r = await fetch(RES + '/resource/res-002', { headers: { Authorization: 'Bearer ' + ticket } });
+ const d = await r.json();
+ pass = !r.ok;
+ txt = !r.ok ? 'DENY (correct)\n' + d.detail : 'ALLOW — should have been denied';
+ log('SC2', pass ? 'OK' : 'DENY', 'Carol clearance check — ' + (!r.ok ? 'DENIED correctly' : 'NOT denied'));
+ }
+ else if (n === 3) {
+ const tgt = await loginAs('dave');
+ const { ticket } = await ticketFor(tgt);
+ const r = await fetch(RES + '/resource/res-002', { headers: { Authorization: 'Bearer ' + ticket } });
+ const d = await r.json();
+ pass = !r.ok;
+ txt = !r.ok ? 'DENY (correct)\n' + d.detail : 'ALLOW — external block failed';
+ log('SC3', pass ? 'OK' : 'WARN', 'Dave external block — ' + (!r.ok ? 'blocked correctly' : 'NOT blocked'));
+ }
+ else if (n === 4) {
+ const tgt = await loginAs('bob');
+ const nonce = crypto.randomUUID();
+ const r1 = await fetch(KDC + '/request-ticket', {
+ method: 'POST', headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tgt, service: 'res', nonce })
+ });
+ const r2 = await fetch(KDC + '/request-ticket', {
+ method: 'POST', headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tgt, service: 'res', nonce })
+ });
+ const d2 = await r2.json();
+ pass = !r2.ok;
+ txt = 'First request: ' + r1.status + ' OK\nReplay attempt: ' + r2.status + ' — ' + (d2.detail||'');
+ log('SC4', pass ? 'OK' : 'WARN', 'Replay attack — ' + (!r2.ok ? 'blocked' : 'NOT blocked'));
+ }
+ else if (n === 5) {
+ const tgt = await loginAs('carol');
+ const { ticket } = await ticketFor(tgt);
+ const tampered = ticket.slice(0, -10) + 'TAMPERED00';
+ const r = await fetch(RES + '/resource/res-001', { headers: { Authorization: 'Bearer ' + tampered } });
+ const d = await r.json();
+ pass = !r.ok;
+ txt = !r.ok ? 'DENY (correct)\n' + d.detail : 'ALLOW — tamper not detected';
+ log('SC5', pass ? 'OK' : 'WARN', 'Ticket tampering — ' + (!r.ok ? 'detected' : 'NOT detected'));
+ }
+ else if (n === 6) {
+ const tgt = await loginAs('carol');
+ const { ticket } = await ticketFor(tgt);
+ const r = await fetch(RES + '/resource/res-004', { method: 'DELETE', headers: { Authorization: 'Bearer ' + ticket } });
+ const d = await r.json();
+ pass = !r.ok;
+ txt = !r.ok ? 'DENY (correct)\n' + d.detail : 'ALLOW — privilege escalation not blocked';
+ log('SC6', pass ? 'OK' : 'WARN', 'Privilege escalation — ' + (!r.ok ? 'blocked' : 'NOT blocked'));
+ }
+ else if (n === 7) {
+ const r = await fetch(KDC + '/login', {
+ method: 'POST', headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ username: 'alice', password: 'WRONG_PASSWORD' })
+ });
+ const d = await r.json();
+ pass = !r.ok;
+ txt = !r.ok ? 'DENY (correct)\n' + d.detail : 'ALLOW — invalid credentials accepted';
+ log('SC7', pass ? 'OK' : 'WARN', 'Wrong password — ' + (!r.ok ? 'rejected' : 'NOT rejected'));
+ }
+ else if (n === 8) {
+ const tgt = await loginAs('bob');
+ const { ticket } = await ticketFor(tgt);
+ const r = await fetch(RES + '/resource/res-002', { headers: { Authorization: 'Bearer ' + ticket } });
+ const d = await r.json();
+ pass = r.ok;
+ txt = r.ok ? 'ALLOW\n' + JSON.stringify(d.resource||d, null, 2) : 'DENY\n' + d.detail;
+ log('SC8', r.ok ? 'OK' : 'DENY', 'Bob Finance Manager reads secret — ' + (r.ok ? 'ALLOW' : 'DENY: ' + d.detail));
+ }
+
+ card.className = 'sc-card ' + (pass ? 'passed' : 'failed');
+ showRes(out, txt, pass ? 'ok' : 'err');
+ } catch(e) {
+ card.className = 'sc-card failed';
+ showRes(out, 'Server error: ' + e.message + '\nEnsure all 3 servers are running.', 'err');
+ log('SC' + n, 'WARN', 'Error: ' + e.message);
+ }
+}
+
+async function runAll() {
+ for (let i = 1; i <= 8; i++) { await runSc(i); await delay(300); }
+ toast('All scenarios complete', 'ok');
+}
+
+function resetAll() {
+ for (let i = 1; i <= 8; i++) {
+ document.getElementById('sc' + i).className = 'sc-card';
+ const r = document.getElementById('scr' + i);
+ r.className = 'response';
+ r.textContent = '';
+ }
+}
+
+// SERVERS 
+async function checkServers() {
+ const map = [
+ { url: KDC, pill: 'pill-kdc', dc: 'dc-kdc', ds: 'ds-kdc' },
+ { url: PDP, pill: 'pill-pdp', dc: 'dc-pdp', ds: 'ds-pdp' },
+ { url: RES, pill: 'pill-res', dc: 'dc-res', ds: 'ds-res' },
+ ];
+ for (const s of map) {
+ let up = false;
+ try {
+ await fetch(s.url + '/docs', { signal: AbortSignal.timeout(2000) });
+ up = true;
+ } catch(e) {}
+ const pill = document.getElementById(s.pill);
+ const dc = document.getElementById(s.dc);
+ const ds = document.getElementById(s.ds);
+ if (pill) pill.className = 'srv-pill ' + (up ? 'up' : 'down');
+ if (dc) dc.className = 'srv-card ' + (up ? 'up' : 'down');
+ if (ds) { ds.textContent = up ? 'Online' : 'Offline'; ds.className = 'srv-card-state ' + (up ? 'ok' : ''); }
+ }
+}
+
+// UI 
+function updateUI() {
+ if (!S.user) return;
+ const u = S.user;
+ document.getElementById('sessionInfo').classList.add('visible');
+ document.getElementById('sessAvatar').textContent = (u.username||'?')[0].toUpperCase();
+ document.getElementById('sessName').textContent = u.username||'?';
+ document.getElementById('sessRole').textContent = (u.role||'') + ' · ' + (u.department||'');
+ document.getElementById('userBar').classList.add('show');
+ document.getElementById('ubAvatar').textContent = (u.username||'?')[0].toUpperCase();
+ document.getElementById('ubName').textContent = u.username||'?';
+ document.getElementById('ubMeta').textContent = [u.role, u.department, u.clearance, u.location].filter(Boolean).join(' · ');
+ if (S.ticket) document.getElementById('ubToken').textContent = S.ticket.substring(0,38) + '...';
+ document.getElementById('dsSess').textContent = 'Active';
+ document.getElementById('dsSess').classList.remove('empty');
+ document.getElementById('dsRole').textContent = u.role||'—';
+ document.getElementById('dsRole').classList.remove('empty');
+ document.getElementById('dsClear').textContent = u.clearance||'—';
+ document.getElementById('dsClear').classList.remove('empty');
+ document.getElementById('dsLoc').textContent = u.location||'—';
+ document.getElementById('dsLoc').classList.remove('empty');
+}
+
+function logout() {
+ S = { tgt: null, ticket: null, user: null };
+ document.getElementById('sessionInfo').classList.remove('visible');
+ document.getElementById('userBar').classList.remove('show');
+ ['dsSess','dsRole','dsClear','dsLoc'].forEach(id => {
+ const el = document.getElementById(id);
+ el.textContent = id === 'dsSess' ? 'Not authenticated' : '—';
+ el.classList.add('empty');
+ });
+ log('AUTH', 'SYS', 'User signed out');
+ nav('auth');
+}
+
+function showRes(el, txt, type) {
+ el.textContent = txt;
+ el.className = 'response show ' + (type === 'ok' ? 'ok' : type === 'err' ? 'err' : 'neu');
+}
+
+function log(src, lvl, msg) {
+ const now = new Date().toTimeString().substring(0,8);
+ const line = document.createElement('div');
+ line.className = 'log-line';
+ const lvlMap = { OK: 'OK', DENY: 'DENY', WARN: 'WARN', SYS: 'SYS', INFO: 'INFO' };
+ const lvlClass = lvlMap[lvl] || 'INFO';
+ line.innerHTML = `<span class="log-ts">${now}</span><span class="log-lvl ${lvlClass}">${lvl}</span><span class="log-text">[${src}] ${msg}</span>`;
+ const s = document.getElementById('logStream');
+ s.appendChild(line);
+ s.scrollTop = s.scrollHeight;
+}
+
+function clearLog() {
+ document.getElementById('logStream').innerHTML = '<div class="log-line"><span class="log-ts">--:--:--</span><span class="log-lvl SYS">SYS</span><span class="log-text">Log cleared.</span></div>';
+}
+
+let toastT;
+function toast(msg, type) {
+ const t = document.getElementById('toast');
+ document.getElementById('toastMsg').textContent = msg;
+ t.className = 'show ' + type;
+ clearTimeout(toastT);
+ toastT = setTimeout(() => { t.className = ''; }, 3000);
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// AUDIT LOG 
+let auditFilter = 'ALL';
+let auditAutoTimer = null;
+let auditAutoOn = true;
+let auditEntries = [];
+
+async function fetchAuditLog() {
+ try {
+ const r = await fetch(KDC + '/audit-log');
+ if (!r.ok) throw new Error('HTTP ' + r.status);
+ const d = await r.json();
+ auditEntries = (d.entries || []).reverse();
+ renderAuditTable();
+ updateAuditStats();
+ } catch(e) {
+ const tbody = document.getElementById('auditTbody');
+ tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--red);padding:24px">Cannot reach KDC — make sure python kdc.py is running on port 8000</td></tr>';
+ }
+}
+
+function renderAuditTable() {
+ const tbody = document.getElementById('auditTbody');
+ const f = auditFilter;
+ const rows = auditEntries.filter(e => {
+ if (f === 'ALL') return true;
+ if (f === 'OK') return e.status === 'OK';
+ if (f === 'FAIL') return e.status === 'FAIL';
+ if (f === 'ATTACK') return e.status === 'ATTACK';
+ if (f === 'KDC') return e.server === 'KDC';
+ if (f === 'PDP') return e.server === 'PDP';
+ if (f === 'ResourceServer') return e.server === 'ResourceServer';
+ return true;
+ });
+
+ if (!rows.length) {
+ tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">No entries match this filter.</td></tr>';
+ return;
+ }
+
+ tbody.innerHTML = rows.map(e => {
+ const ts = (e.timestamp||'').substring(11,19);
+ const srv = e.server || '?';
+ const evt = e.event || '?';
+ const user = e.username || e.user || '—';
+ const status = e.status || e.decision || '?';
+ const detail = e.detail || e.reason || e.action || '';
+
+ let statusHtml = '';
+ if (status === 'OK' || status === 'ALLOW') statusHtml = `<span class="al-ok">${status}</span>`;
+ else if (status === 'ATTACK') statusHtml = `<span class="al-atk">ATTACK</span>`;
+ else if (status === 'FAIL' || status === 'DENY') statusHtml = `<span class="al-fail">${status}</span>`;
+ else statusHtml = `<span style="color:var(--text2)">${status}</span>`;
+
+ return `<tr>
+ <td style="font-family:monospace;font-size:11px;color:var(--text3)">${ts}</td>
+ <td><span class="al-srv">${srv}</span></td>
+ <td style="font-size:11.5px;color:var(--text2)">${evt}</td>
+ <td style="font-weight:600;color:var(--text)">${user}</td>
+ <td>${statusHtml}</td>
+ <td style="font-size:11px;color:var(--text3);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${detail.replace(/"/g,"'")}">${detail}</td>
+ </tr>`;
+ }).join('');
+}
+
+function updateAuditStats() {
+ const total = auditEntries.length;
+ const ok = auditEntries.filter(e => e.status === 'OK' || e.status === 'ALLOW').length;
+ const deny = auditEntries.filter(e => e.status === 'DENY' || e.status === 'FAIL').length;
+ const atk = auditEntries.filter(e => e.status === 'ATTACK').length;
+ document.getElementById('al-total').textContent = total;
+ document.getElementById('al-ok').textContent = ok;
+ document.getElementById('al-deny').textContent = deny;
+ document.getElementById('al-atk').textContent = atk;
+}
+
+function setAuditFilter(f, btn) {
+ auditFilter = f;
+ document.querySelectorAll('.filter-btn[data-f]').forEach(b => b.classList.remove('active'));
+ btn.classList.add('active');
+ renderAuditTable();
+}
+
+function clearAuditFilter() {
+ auditFilter = 'ALL';
+ document.querySelectorAll('.filter-btn[data-f]').forEach(b => b.classList.remove('active'));
+ document.querySelector('.filter-btn[data-f="ALL"]').classList.add('active');
+ renderAuditTable();
+}
+
+function toggleAuditAuto() {
+ auditAutoOn = !auditAutoOn;
+ const lbl = document.getElementById('al-autoLabel');
+ const btn = lbl.nextElementSibling;
+ if (auditAutoOn) {
+ lbl.textContent = 'Auto-refresh: ON';
+ btn.textContent = 'Pause';
+ startAuditAuto();
+ } else {
+ lbl.textContent = 'Auto-refresh: OFF';
+ btn.textContent = 'Resume';
+ clearInterval(auditAutoTimer);
+ }
+}
+
+function startAuditAuto() {
+ clearInterval(auditAutoTimer);
+ auditAutoTimer = setInterval(() => {
+ if (document.getElementById('panel-log').classList.contains('active')) fetchAuditLog();
+ }, 4000);
+}
+
+// SERVER LOGS 
+let srvTab = 'kdc';
+let srvAutoTimer = null;
+let srvAutoOn = true;
+
+const SRV_META = {
+ kdc: { title: 'KDC Log', sub: 'Authentication server — logins, TGTs, tickets', url: () => KDC + '/server-log' },
+ pdp: { title: 'PDP Log', sub: 'Policy Decision Point — ABAC evaluations', url: () => PDP + '/server-log' },
+ res: { title: 'Resource Server Log', sub: 'Resource access events', url: () => RES + '/server-log' },
+};
+
+function setSrvTab(tab) {
+ srvTab = tab;
+ ['kdc','pdp','res'].forEach(t => document.getElementById('srvtab-' + t).classList.remove('active'));
+ document.getElementById('srvtab-' + tab).classList.add('active');
+ const m = SRV_META[tab];
+ document.getElementById('srvLogTitle').textContent = m.title;
+ document.getElementById('srvLogSub').textContent = m.sub;
+ fetchSrvLog();
+}
+
+async function fetchSrvLog() {
+ const stream = document.getElementById('srvLogStream');
+ const m = SRV_META[srvTab];
+ stream.innerHTML = '<div class="log-line"><span class="log-ts">...</span><span class="log-lvl SYS">SYS</span><span class="log-text">Fetching logs…</span></div>';
+ try {
+ const r = await fetch(m.url());
+ if (!r.ok) throw new Error('HTTP ' + r.status);
+ const d = await r.json();
+ const lines = (d.lines || d.entries || []);
+ document.getElementById('srvLogCount').textContent = lines.length + ' lines';
+ if (!lines.length) {
+ stream.innerHTML = '<div class="log-line"><span class="log-ts">--:--:--</span><span class="log-lvl SYS">SYS</span><span class="log-text">No log entries yet.</span></div>';
+ return;
+ }
+ stream.innerHTML = lines.map(line => {
+ let ts = '--:--:--', lvl = 'INFO', text = '';
+ if (typeof line === 'string') {
+ const m = line.match(/(\d{2}:\d{2}:\d{2})/);
+ ts = m ? m[1] : '--:--:--';
+ if (line.includes('[WARNING]') || line.includes('ATTACK') || line.includes('DENY')) lvl = 'WARN';
+ else if (line.includes('[ERROR]')) lvl = 'DENY';
+ else if (line.includes('OK') || line.includes('ALLOW')) lvl = 'OK';
+ text = line.replace(/.*\[(INFO|WARNING|ERROR|DEBUG)\]\s*/, '').trim();
+ } else {
+ ts = (line.timestamp||'').substring(11,19);
+ const s = line.status || line.decision || '';
+ if (s === 'ATTACK') lvl = 'DENY';
+ else if (s === 'FAIL' || s === 'DENY') lvl = 'WARN';
+ else if (s === 'OK' || s === 'ALLOW') lvl = 'OK';
+ text = `[${line.event||line.server||'?'}] user=${line.username||'?'} ${line.detail||line.reason||''}`;
+ }
+ return `<div class="log-line">
+ <span class="log-ts">${ts}</span>
+ <span class="log-lvl ${lvl}">${lvl}</span>
+ <span class="log-text">${text}</span>
+ </div>`;
+ }).join('');
+ stream.scrollTop = stream.scrollHeight;
+ } catch(e) {
+ stream.innerHTML = `<div class="log-line"><span class="log-ts">--:--:--</span><span class="log-lvl DENY">ERR</span><span class="log-text">Cannot reach server. Endpoint /server-log may not exist — see note below.</span></div>
+ <div class="log-line"><span class="log-ts"></span><span class="log-lvl SYS">SYS</span><span class="log-text">Fallback: using /audit-log data for this server.</span></div>`;
+ fallbackSrvLog();
+ }
+}
+
+async function fallbackSrvLog() {
+ try {
+ const r = await fetch(KDC + '/audit-log');
+ const d = await r.json();
+ const srvMap = { kdc: 'KDC', pdp: 'PDP', res: 'ResourceServer' };
+ const target = srvMap[srvTab];
+ const entries = (d.entries || []).filter(e => e.server === target).reverse();
+ const stream = document.getElementById('srvLogStream');
+ document.getElementById('srvLogCount').textContent = entries.length + ' entries (from audit)';
+ if (!entries.length) {
+ stream.innerHTML += '<div class="log-line"><span class="log-ts">--:--:--</span><span class="log-lvl SYS">SYS</span><span class="log-text">No audit entries for this server yet.</span></div>';
+ return;
+ }
+ entries.forEach(e => {
+ const ts = (e.timestamp||'').substring(11,19);
+ let lvl = 'INFO';
+ if (e.status === 'ATTACK') lvl = 'DENY';
+ else if (e.status === 'FAIL' || e.status === 'DENY') lvl = 'WARN';
+ else if (e.status === 'OK' || e.status === 'ALLOW') lvl = 'OK';
+ const text = `[${e.event}] user=${e.username||'?'} → ${e.status} | ${e.detail||''}`;
+ stream.innerHTML += `<div class="log-line"><span class="log-ts">${ts}</span><span class="log-lvl ${lvl}">${lvl}</span><span class="log-text">${text}</span></div>`;
+ });
+ stream.scrollTop = stream.scrollHeight;
+ } catch(e2) {}
+}
+
+function toggleSrvAuto() {
+ srvAutoOn = !srvAutoOn;
+ const lbl = document.getElementById('sl-autoLabel');
+ const btn = lbl.nextElementSibling;
+ if (srvAutoOn) {
+ lbl.textContent = 'Auto-refresh: ON';
+ btn.textContent = 'Pause';
+ startSrvAuto();
+ } else {
+ lbl.textContent = 'Auto-refresh: OFF';
+ btn.textContent = 'Resume';
+ clearInterval(srvAutoTimer);
+ }
+}
+
+function startSrvAuto() {
+ clearInterval(srvAutoTimer);
+ srvAutoTimer = setInterval(() => {
+ if (document.getElementById('panel-srvlog').classList.contains('active')) fetchSrvLog();
+ }, 5000);
+}
+
+startAuditAuto();
+startSrvAuto();
+
+setInterval(checkServers, 8000);
+log('SYS', 'SYS', 'SecureCorp IAM Platform ready');
+
+// LIVE ATTACK LAB STATE 
+let labTgt = null;
+let labUsedNonce = null;
+let tampTicket = null;
+let tampOriginal = null;
+
+// helpers 
+function showStep(id) {
+ const el = document.getElementById(id);
+ if (!el) return;
+ el.style.opacity = '1';
+ el.style.pointerEvents = 'auto';
+ el.classList.add('active');
+}
+function codeTag(s) { return '<code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;font-family:monospace">' + s + '</code>'; }
+
+// 
+// LAB 1 — REPLAY ATTACK
+// 
+async function labStep1() {
+ const user = document.getElementById('lab-user').value;
+ const r1 = document.getElementById('lab-r1');
+ showRes(r1, 'POST ' + KDC + '/login ...', '');
+ try {
+ const r = await fetch(KDC + '/login', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ username: user, password: 'password123' })
+ });
+ const d = await r.json();
+ if (r.ok && d.tgt) {
+ labTgt = d.tgt;
+ showRes(r1,
+ 'HTTP ' + r.status + ' OK\n' +
+ 'TGT émis → ' + d.tgt.substring(0, 50) + '...\n\n' +
+ '→ Passe à l\'étape 2 : saisis un nonce et envoie la requête.', 'ok');
+ showStep('lab-step2');
+ document.getElementById('lab-nonce').focus();
+ } else {
+ showRes(r1, 'HTTP ' + r.status + ' — ' + (d.detail || JSON.stringify(d)), 'err');
+ }
+ } catch(e) {
+ showRes(r1, ' KDC inaccessible (port 8000). Lance kdc.py d\'abord.\nErreur: ' + e.message, 'err');
+ }
+}
+
+function labNewNonce() {
+ document.getElementById('lab-nonce').value = crypto.randomUUID().split('-')[0];
+}
+
+async function labSend() {
+ if (!labTgt) { toast('Lance l\'étape 1 d\'abord', 'err'); return; }
+ const nonce = document.getElementById('lab-nonce').value.trim();
+ if (!nonce) { toast('Entre un nonce dans le champ', 'err'); return; }
+ const r2 = document.getElementById('lab-r2');
+ showRes(r2, 'POST ' + KDC + '/request-ticket (nonce: "' + nonce + '") ...', '');
+ try {
+ const r = await fetch(KDC + '/request-ticket', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tgt: labTgt, service: 'resource_server', nonce })
+ });
+ const d = await r.json();
+ if (r.ok && d.service_ticket) {
+ labUsedNonce = nonce;
+ showRes(r2,
+ 'HTTP ' + r.status + ' OK — Ticket émis \n' +
+ 'Nonce "' + nonce + '" accepté et enregistré dans USED_NONCES du KDC.\n' +
+ 'Service ticket: ' + d.service_ticket.substring(0, 55) + '...', 'ok');
+ // Show replay zone
+ const replayZone = document.getElementById('lab-replay-zone');
+ replayZone.style.display = 'block';
+ document.getElementById('lab-used-nonce').textContent = nonce;
+ document.getElementById('lab-r3').className = 'response';
+ document.getElementById('lab-r3').textContent = '';
+ document.getElementById('lab-banner').style.display = 'none';
+ log('LAB1', 'OK', 'Nonce "' + nonce + '" accepté');
+ } else {
+ showRes(r2,
+ 'HTTP ' + r.status + ' — ' + (d.detail || JSON.stringify(d)) + '\n\n' +
+ (d.detail && d.detail.toLowerCase().includes('replay')
+ ? ' Replay détecté! Ce nonce était déjà utilisé.'
+ : 'Le KDC a refusé la requête.'), r.ok ? 'ok' : 'err');
+ if (d.detail && d.detail.toLowerCase().includes('replay')) {
+ document.getElementById('lab-banner').style.display = 'block';
+ log('LAB1', 'ATTACK', 'Replay bloqué — nonce: ' + nonce);
+ }
+ }
+ } catch(e) {
+ showRes(r2, ' KDC inaccessible: ' + e.message, 'err');
+ }
+}
+
+async function labReplay() {
+ if (!labTgt || !labUsedNonce) { toast('Envoie d\'abord une requête à l\'étape 2', 'err'); return; }
+ const r3 = document.getElementById('lab-r3');
+ showRes(r3, ' POST ' + KDC + '/request-ticket (nonce: "' + labUsedNonce + '") ← MÊME NONCE ...', '');
+ try {
+ const r = await fetch(KDC + '/request-ticket', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tgt: labTgt, service: 'resource_server', nonce: labUsedNonce })
+ });
+ const d = await r.json();
+ if (!r.ok) {
+ showRes(r3,
+ 'HTTP ' + r.status + ' — ' + (d.detail || JSON.stringify(d)) + '\n\n' +
+ ' REPLAY BLOQUÉ — Le KDC a reconnu le nonce "' + labUsedNonce + '" comme déjà utilisé.\n' +
+ 'Aucun ticket émis. Attaque neutralisée.', 'err');
+ document.getElementById('lab-banner').style.display = 'block';
+ log('LAB1', 'ATTACK', 'Replay bloqué — nonce: ' + labUsedNonce);
+ } else {
+ showRes(r3, 'HTTP ' + r.status + ' — Ticket accepté (inattendu!). Nonce anti-replay non actif?', 'warn');
+ }
+ } catch(e) {
+ showRes(r3, ' KDC inaccessible: ' + e.message, 'err');
+ }
+}
+
+// 
+// LAB 2 — TICKET TAMPERING
+// 
+async function tampStep1() {
+ const user = document.getElementById('tamp-user').value;
+ const r1 = document.getElementById('tamp-r1');
+ showRes(r1, 'Login + request-ticket ...', '');
+ try {
+ const lr = await fetch(KDC + '/login', {
+ method: 'POST', headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ username: user, password: 'password123' })
+ });
+ const ld = await lr.json();
+ if (!lr.ok) { showRes(r1, 'HTTP ' + lr.status + ' — ' + ld.detail, 'err'); return; }
+
+ const nonce = crypto.randomUUID();
+ const tr = await fetch(KDC + '/request-ticket', {
+ method: 'POST', headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tgt: ld.tgt, service: 'resource_server', nonce })
+ });
+ const td = await tr.json();
+ if (tr.ok && td.service_ticket) {
+ tampTicket = td.service_ticket;
+ tampOriginal = td.service_ticket;
+ const ta = document.getElementById('tamp-ticket-edit');
+ ta.value = tampTicket;
+ const parts = tampTicket.split('.');
+ showRes(r1,
+ 'HTTP ' + tr.status + ' OK — JWT obtenu pour ' + user + ' \n\n' +
+ 'Structure JWT (3 parties):\n' +
+ ' Header: ' + parts[0].substring(0,30) + '...\n' +
+ ' Payload: ' + parts[1].substring(0,30) + '...\n' +
+ ' Signature: ' + parts[2].substring(0,30) + '...\n\n' +
+ '→ Modifie le ticket ci-dessous ou envoie-le intact.', 'ok');
+ showStep('tamp-step2');
+ document.getElementById('tamp-banner').style.display = 'none';
+ log('LAB2', 'OK', 'Ticket obtenu pour ' + user);
+ } else {
+ showRes(r1, 'HTTP ' + tr.status + ' — ' + JSON.stringify(td), 'err');
+ }
+ } catch(e) {
+ showRes(r1, ' Serveur inaccessible: ' + e.message, 'err');
+ }
+}
+
+function tampCorruptSig() {
+ const t = document.getElementById('tamp-ticket-edit').value.trim();
+ const parts = t.split('.');
+ if (parts.length !== 3) { toast('JWT invalide (3 parties attendues)', 'err'); return; }
+ // Flip last 8 chars of signature
+ const sig = parts[2];
+ parts[2] = sig.slice(0, -8) + (sig.slice(-8) === 'XXXXXXXX' ? '12345678' : 'XXXXXXXX');
+ document.getElementById('tamp-ticket-edit').value = parts.join('.');
+ toast('Signature corrompue — maintenant invalide', 'ok');
+}
+
+function tampEscalate() {
+ const t = document.getElementById('tamp-ticket-edit').value.trim();
+ const parts = t.split('.');
+ if (parts.length !== 3) { toast('JWT invalide', 'err'); return; }
+ try {
+ const pad = s => s + '='.repeat((4 - s.length % 4) % 4);
+ const payload = JSON.parse(atob(pad(parts[1].replace(/-/g, '+').replace(/_/g, '/'))));
+ const origRole = payload.role;
+ payload.role = 'Admin';
+ payload.clearance = 'secret';
+ const enc = btoa(JSON.stringify(payload)).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+ parts[1] = enc;
+ document.getElementById('tamp-ticket-edit').value = parts.join('.');
+ toast('Payload modifiée: ' + origRole + ' → Admin (signature devenue invalide)', 'ok');
+ } catch(e) { toast('Erreur parsing payload: ' + e.message, 'err'); }
+}
+
+function tampReset() {
+ if (!tampOriginal) { toast('Obtiens d\'abord un ticket', 'err'); return; }
+ document.getElementById('tamp-ticket-edit').value = tampOriginal;
+ document.getElementById('tamp-r2').className = 'response';
+ document.getElementById('tamp-r2').textContent = '';
+ document.getElementById('tamp-banner').style.display = 'none';
+ toast('Ticket remis à l\'original ', 'ok');
+}
+
+async function tampSend(resourceId) {
+ const ticket = document.getElementById('tamp-ticket-edit').value.trim();
+ if (!ticket) { toast('Pas de ticket — étape 1 d\'abord', 'err'); return; }
+ const r2 = document.getElementById('tamp-r2');
+ const isModified = ticket !== tampOriginal;
+ showRes(r2,
+ (isModified ? ' [TICKET FALSIFIÉ] ' : ' [TICKET INTACT] ') +
+ 'GET ' + RES + '/resource/' + resourceId + ' ...', '');
+ try {
+ const r = await fetch(RES + '/resource/' + resourceId, {
+ headers: { Authorization: 'Bearer ' + ticket }
+ });
+ const d = await r.json();
+ if (r.ok) {
+ showRes(r2,
+ 'HTTP ' + r.status + ' — Accès ACCORDÉ \n\n' +
+ 'Ressource: ' + JSON.stringify(d.resource || d, null, 2), 'ok');
+ log('LAB2', 'OK', 'Ticket accepté → ' + resourceId);
+ } else {
+ const isAuthFail = r.status === 401;
+ showRes(r2,
+ 'HTTP ' + r.status + ' — ' + (d.detail || JSON.stringify(d)) + '\n\n' +
+ (isAuthFail && isModified
+ ? ' FALSIFICATION DÉTECTÉE — La vérification HMAC-SHA256 a échoué.\nLe Resource Server rejette tout token dont la signature ne correspond pas.'
+ : r.status === 403
+ ? ' ACCÈS REFUSÉ par politique ABAC/RBAC (ticket valide, mais permissions insuffisantes).'
+ : ''), 'err');
+ if (isAuthFail && isModified) {
+ document.getElementById('tamp-banner').style.display = 'block';
+ log('LAB2', 'ATTACK', 'Tampering détecté → ' + d.detail);
+ } else {
+ log('LAB2', r.status === 403 ? 'DENY' : 'ERR', d.detail || '');
+ }
+ }
+ } catch(e) {
+ showRes(r2, ' Resource Server inaccessible (port 8002). Lance resource_server.py\nErreur: ' + e.message, 'err');
+ }
+}
+
+// 
+// LAB 3 — PRIVILEGE ESCALATION
+// 
+const PRIV_HINTS = {
+ 'carol|DELETE:res-004': 'carol est Employee → RBAC autorise seulement READ. DELETE sera bloqué par le Resource Server.',
+ 'carol|READ:res-002': 'carol a clearance public, res-002 est secret/Finance. ABAC policy-3 + policy-2 bloqueront.',
+ 'carol|READ:res-003': 'carol est HR, res-003 est IT/secret. ABAC policy-2 (département) + policy-3 (clearance) bloqueront.',
+ 'carol|BRUTE': 'Envoie 3 tentatives avec mauvais mot de passe → le KDC logue BRUTE_FORCE_ATTACK.',
+ 'bob|DELETE:res-004': 'bob est Manager → RBAC autorise READ+WRITE mais pas DELETE. Policy-6 (SoD) bloquera.',
+ 'bob|READ:res-002': 'bob est Manager/Finance avec clearance confidential. res-002 est secret → policy-5 peut bloquer.',
+ 'bob|READ:res-003': 'bob est Finance, res-003 est IT. Policy-2 (département mismatch) bloquera.',
+ 'bob|BRUTE': 'bob avec 3 mauvais mots de passe → BRUTE_FORCE dans audit.',
+ 'dave|DELETE:res-004': 'dave est Employee → RBAC bloque DELETE.',
+ 'dave|READ:res-002': 'dave est External + public clearance → policy-1 (location) + policy-3 (clearance) bloqueront.',
+ 'dave|READ:res-003': 'dave est External + Finance dept, res-003 est IT/secret. Multiple policies bloqueront.',
+ 'dave|BRUTE': '3 mauvais mots de passe pour dave → BRUTE_FORCE_ATTACK loggé.',
+};
+
+function privUpdateHint() {
+ const user = document.getElementById('priv-user').value;
+ const action = document.getElementById('priv-action').value;
+ const hint = PRIV_HINTS[user + '|' + action] || '';
+ document.getElementById('priv-hint').textContent = hint ? ' ' + hint : '';
+}
+
+async function privRun() {
+ const user = document.getElementById('priv-user').value;
+ const action = document.getElementById('priv-action').value;
+ const out = document.getElementById('priv-result');
+
+ if (action === 'BRUTE') {
+ showRes(out, ' Envoi de 3 tentatives avec mauvais mot de passe pour ' + user + ' ...', '');
+ let log_lines = '';
+ for (let i = 1; i <= 3; i++) {
+ const r = await fetch(KDC + '/login', {
+ method: 'POST', headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ username: user, password: 'wrongpassword' + i })
+ });
+ const d = await r.json();
+ log_lines += 'Tentative ' + i + ': HTTP ' + r.status + ' — ' + (d.detail || '') + '\n';
+ await delay(300);
+ }
+ showRes(out,
+ log_lines + '\n 3ème tentative → BRUTE_FORCE_ATTACK enregistré dans logs/audit.log\n' +
+ 'Vérifie l\'onglet Audit Log pour voir l\'entrée.', 'err');
+ log('LAB3', 'ATTACK', 'Brute force 3× pour ' + user);
+ return;
+ }
+
+ showRes(out, 'Login + ticket pour ' + user + ' ...', '');
+ try {
+ const lr = await fetch(KDC + '/login', {
+ method: 'POST', headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ username: user, password: 'password123' })
+ });
+ const ld = await lr.json();
+ if (!lr.ok) { showRes(out, 'HTTP ' + lr.status + ' — Login: ' + ld.detail, 'err'); return; }
+
+ const nonce = crypto.randomUUID();
+ const tr = await fetch(KDC + '/request-ticket', {
+ method: 'POST', headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tgt: ld.tgt, service: 'resource_server', nonce })
+ });
+ const td = await tr.json();
+ if (!tr.ok) { showRes(out, 'HTTP ' + tr.status + ' — Ticket: ' + td.detail, 'err'); return; }
+ const ticket = td.service_ticket;
+
+ const [method, resourceId] = action.split(':');
+ let url = RES + '/resource/' + resourceId;
+ let fetchOpts = { headers: { Authorization: 'Bearer ' + ticket } };
+
+ if (method === 'DELETE') {
+ fetchOpts.method = 'DELETE';
+ showRes(out, ' DELETE ' + url + ' avec ticket de ' + user + ' ...', '');
+ } else {
+ showRes(out, ' GET ' + url + ' avec ticket de ' + user + ' ...', '');
+ }
+
+ const r = await fetch(url, fetchOpts);
+ const d = await r.json();
+
+ if (r.ok) {
+ showRes(out,
+ 'HTTP ' + r.status + ' — ACCORDÉ \n\n' +
+ (d.resource ? JSON.stringify(d.resource, null, 2) : JSON.stringify(d, null, 2)), 'ok');
+ log('LAB3', 'OK', user + ' ' + method + ' ' + resourceId + ' → ALLOW');
+ } else {
+ showRes(out,
+ 'HTTP ' + r.status + ' — REFUSÉ \n\n' +
+ (d.detail || JSON.stringify(d)) + '\n\n' +
+ (r.status === 403 ? 'Le Resource Server a consulté le PDP → décision DENY selon les politiques ABAC/RBAC.' : ''), 'err');
+ log('LAB3', 'ATTACK', user + ' ' + method + ' ' + resourceId + ' → DENY: ' + (d.detail||''));
+ }
+ } catch(e) {
+ showRes(out, ' Serveur inaccessible: ' + e.message + '\nVérifie que les 3 serveurs tournent.', 'err');
+ }
+}
+
+</script>
+</body>
+</html>

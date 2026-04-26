@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+
+  kdc:
+    build:
+      context: .
+      dockerfile: Dockerfile.kdc
+    container_name: securecorp-kdc
+    ports:
+      - "8000:8000"
+    volumes:
+      - logs:/app/logs
+    networks:
+      - securecorp-net
+    restart: unless-stopped
+
+  pdp:
+    build:
+      context: .
+      dockerfile: Dockerfile.pdp
+    container_name: securecorp-pdp
+    ports:
+      - "8001:8001"
+    volumes:
+      - logs:/app/logs
+    networks:
+      - securecorp-net
+    restart: unless-stopped
+
+  resource-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.resource
+    container_name: securecorp-resource
+    ports:
+      - "8002:8002"
+    volumes:
+      - logs:/app/logs
+    environment:
+      - PDP_URL=http://pdp:8001
+      - KDC_URL=http://kdc:8000
+    depends_on:
+      - kdc
+      - pdp
+    networks:
+      - securecorp-net
+    restart: unless-stopped
+
+volumes:
+  logs:
+    driver: local
+
+networks:
+  securecorp-net:
+    driver: bridge

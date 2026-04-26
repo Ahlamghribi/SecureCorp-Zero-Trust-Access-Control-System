@@ -1,0 +1,8 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN pip install fastapi uvicorn pyjwt cryptography --break-system-packages 2>/dev/null || \
+    pip install fastapi uvicorn pyjwt cryptography
+COPY config.py kdc.py ./
+RUN mkdir -p logs
+EXPOSE 8000
+CMD ["python", "kdc.py"]
