@@ -32,6 +32,7 @@
     "condition": {
       "time_outside_hours": true
     }
+<<<<<<< HEAD
   },
   {
     "id": "policy-5",
@@ -53,3 +54,7 @@
     }
   }
 ]
+=======
+  }
+]
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c

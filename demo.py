@@ -1,5 +1,9 @@
 # demo.py - Complete demo script (run AFTER starting all 3 servers)
+<<<<<<< HEAD
 import requests, uuid, sys, datetime
+=======
+import requests, uuid, sys
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 
 KDC = "http://localhost:8000"
 PDP = "http://localhost:8001"
@@ -14,9 +18,15 @@ def check_servers():
     for name, url in [("KDC", KDC), ("PDP", PDP), ("Resource Server", RES)]:
         try:
             requests.get(f"{url}/docs", timeout=2)
+<<<<<<< HEAD
             print(f"  OK  {name} is running at {url}")
         except Exception:
             print(f"  ERR {name} is NOT running at {url} -- start it first!")
+=======
+            print(f"  OK {name} is running at {url}")
+        except Exception:
+            print(f"  ERROR {name} is NOT running at {url} -- start it first!")
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
             sys.exit(1)
 
 def login(username, password="password123"):
@@ -46,6 +56,7 @@ def access_resource(ticket, resource_id):
                      headers={"Authorization": f"Bearer {ticket}"})
     return r.status_code, r.json()
 
+<<<<<<< HEAD
 # ── Time check ──────────────────────────────────────────────
 hour = datetime.datetime.now().hour
 if not (8 <= hour < 18):
@@ -53,36 +64,55 @@ if not (8 <= hour < 18):
     print("  Policy-4 (time-based access) will DENY most requests.")
     print("  Run the demo between 08:00 and 18:00 for full results.\n")
 
+=======
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 print("\nChecking servers...")
 check_servers()
 
 separator("SCENARIO 1 - Valid Access (Alice/Admin reads public HR doc)")
 ticket = get_token("alice")
 code, result = access_resource(ticket, "res-004")
+<<<<<<< HEAD
 print(f"  Status {code}: {result.get('access', result.get('detail'))}")
 if result.get('resource'):
     print(f"  Resource: {result['resource']['name']}")
+=======
+print(f"Status {code}: {result.get('access')} - {result.get('resource', result.get('detail'))}")
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 
 separator("SCENARIO 2 - Access Denied (Carol/Employee tries secret Finance doc)")
 ticket = get_token("carol")
 code, result = access_resource(ticket, "res-002")
+<<<<<<< HEAD
 print(f"  Status {code}: {result.get('detail', result)}")
+=======
+print(f"Status {code}: {result.get('detail', result)}")
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 
 separator("SCENARIO 3 - External user denied secret resource (Dave)")
 ticket = get_token("dave")
 code, result = access_resource(ticket, "res-002")
+<<<<<<< HEAD
 print(f"  Status {code}: {result.get('detail', result)}")
+=======
+print(f"Status {code}: {result.get('detail', result)}")
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 
 separator("SCENARIO 4 - ATTACK: Replay Attack (same nonce reused)")
 tgt_resp = login("bob")
 nonce = str(uuid.uuid4())
 r1 = requests.post(f"{KDC}/request-ticket", json={"tgt": tgt_resp["tgt"], "service": "res", "nonce": nonce})
+<<<<<<< HEAD
 print(f"  First request:  {r1.status_code} {'OK' if r1.ok else 'FAIL'}")
+=======
+print(f"  First request:  {r1.status_code} OK")
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 r2 = requests.post(f"{KDC}/request-ticket", json={"tgt": tgt_resp["tgt"], "service": "res", "nonce": nonce})
 print(f"  Replay attempt: {r2.status_code} - {r2.json().get('detail')}")
 
 separator("SCENARIO 5 - ATTACK: Ticket Tampering")
 ticket = get_token("carol")
+<<<<<<< HEAD
 if ticket:
     tampered = ticket[:-10] + "TAMPERED!!"
     code, result = access_resource(tampered, "res-001")
@@ -132,5 +162,31 @@ try:
         print(f"  [{ts}] {e['server']:15s} {e['event']:20s} user={e.get('username','?'):8s} → {e['status']}")
 except Exception as e:
     print(f"  Could not fetch audit log: {e}")
+=======
+tampered = ticket[:-10] + "TAMPERED!!"
+code, result = access_resource(tampered, "res-001")
+print(f"Status {code}: {result.get('detail')}")
+
+separator("SCENARIO 6 - ATTACK: Privilege Escalation (Employee tries DELETE)")
+ticket = get_token("carol")
+r = requests.delete(f"{RES}/resource/res-004", headers={"Authorization": f"Bearer {ticket}"})
+print(f"Status {r.status_code}: {r.json().get('detail')}")
+
+separator("SCENARIO 7 - ATTACK: Wrong Password")
+result = login("alice", "wrongpassword")
+print(f"Result: {result.get('detail')}")
+
+separator("SCENARIO 8 - Admin creates a new resource")
+ticket = get_token("alice")
+r = requests.post(f"{RES}/resource",
+    headers={"Authorization": f"Bearer {ticket}"},
+    json={"name": "New IT Security Policy", "department": "IT", "classification": "confidential"})
+print(f"Status {r.status_code}: {r.json()}")
+
+separator("SCENARIO 9 - Bob (Manager/Finance) reads Finance secret")
+ticket = get_token("bob")
+code, result = access_resource(ticket, "res-002")
+print(f"Status {code}: {result.get('access', result.get('detail'))}")
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 
 print("\nDemo complete!")

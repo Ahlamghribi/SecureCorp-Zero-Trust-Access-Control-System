@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -40,6 +41,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+=======
+# pdp.py - Policy Decision Point (Port 8001)
+from fastapi import FastAPI
+from pydantic import BaseModel
+import json, datetime
+
+app = FastAPI(title="PDP - Policy Decision Point")
+
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 def load_policies():
     with open("policies.json") as f:
         return json.load(f)
@@ -50,7 +60,11 @@ class AccessRequest(BaseModel):
     department: str
     clearance: str
     location: str
+<<<<<<< HEAD
     action: str                   # read / write / delete
+=======
+    action: str          # read / write / delete
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
     resource_id: str
     resource_department: str
     resource_classification: str  # public / confidential / secret
@@ -62,7 +76,11 @@ RBAC = {
     "Employee": ["read"],
 }
 
+<<<<<<< HEAD
 # Role hierarchy: b niveau 
+=======
+# Role hierarchy: Admin > Manager > Employee
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 ROLE_HIERARCHY = {
     "Admin":    ["Admin", "Manager", "Employee"],
     "Manager":  ["Manager", "Employee"],
@@ -75,6 +93,7 @@ CLEARANCE_LEVEL = {"public": 1, "confidential": 2, "secret": 3}
 def decide(req: AccessRequest):
     """Evaluate access request → ALLOW or DENY"""
     reasons = []
+<<<<<<< HEAD
     current_hour = datetime.datetime.now().hour
 
     # 1. RBAC check — detect privilege escalation attempts
@@ -86,11 +105,23 @@ def decide(req: AccessRequest):
 
     # 2. Load and evaluate ABAC policies
     policies = load_policies()
+=======
+
+    # 1. RBAC check
+    allowed_actions = RBAC.get(req.role, [])
+    if req.action not in allowed_actions:
+        return {"decision": "DENY", "reason": f"RBAC: Role '{req.role}' cannot perform '{req.action}'"}
+
+    # 2. Load and evaluate ABAC policies
+    policies = load_policies()
+    current_hour = datetime.datetime.now().hour
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 
     for policy in policies:
         cond = policy["condition"]
         matched = True
 
+<<<<<<< HEAD
         # policy-1: secret + external location
         if "resource.classification" in cond and "user.location" in cond:
             if (req.resource_classification != cond["resource.classification"]
@@ -156,3 +187,39 @@ if __name__ == "__main__":
     import uvicorn
     logger.info("PDP Policy Decision Point starting on port 8001")
     uvicorn.run(app, host="0.0.0.0", port=8001)
+=======
+        # Check secret + external
+        if "resource.classification" in cond and "user.location" in cond:
+            if req.resource_classification != cond["resource.classification"] or req.location != cond["user.location"]:
+                matched = False
+
+        # Check department mismatch
+        elif cond.get("resource.department_mismatch"):
+            if req.department == req.resource_department:
+                matched = False  # same department = ok
+
+        # Check clearance
+        elif "resource.classification" in cond and "user.clearance" in cond:
+            if req.resource_classification != cond["resource.classification"] or req.clearance != cond["user.clearance"]:
+                matched = False
+
+        # Check time
+        elif cond.get("time_outside_hours"):
+            if 8 <= current_hour < 18:
+                matched = False  # within hours = ok
+
+        if matched and policy["effect"] == "deny":
+            reasons.append(f"Policy [{policy['id']}]: {policy['description']}")
+
+    if reasons:
+        return {"decision": "DENY", "reason": " | ".join(reasons)}
+
+    return {
+        "decision": "ALLOW",
+        "reason": f"RBAC + ABAC passed. Role={req.role}, Clearance={req.clearance}, Action={req.action}"
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c

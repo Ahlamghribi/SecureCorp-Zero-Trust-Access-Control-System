@@ -1,4 +1,5 @@
 # kdc.py - Authentication Server (Port 8000)
+<<<<<<< HEAD
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -41,6 +42,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+=======
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from config import SECRET_KEY, ALGORITHM
+import jwt, datetime, hashlib, uuid
+
+app = FastAPI(title="KDC - Authentication Server")
+
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 USERS = {
     "alice": {"password": hashlib.sha256("password123".encode()).hexdigest(), "role": "Admin",    "department": "IT",      "clearance": "secret",       "location": "internal"},
     "bob":   {"password": hashlib.sha256("password123".encode()).hexdigest(), "role": "Manager",  "department": "Finance", "clearance": "confidential", "location": "internal"},
@@ -50,7 +60,10 @@ USERS = {
 
 ISSUED_TGTS = set()
 USED_NONCES = set()
+<<<<<<< HEAD
 FAILED_LOGINS = {}   # hadi ndiroha brute force 
+=======
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
 
 class LoginRequest(BaseModel):
     username: str
@@ -62,6 +75,7 @@ class TicketRequest(BaseModel):
     nonce: str
 
 @app.post("/login")
+<<<<<<< HEAD
 def login(req: LoginRequest, request: Request):
     ip = request.client.host if request.client else "unknown"
     user = USERS.get(req.username)
@@ -82,6 +96,15 @@ def login(req: LoginRequest, request: Request):
 
     FAILED_LOGINS[req.username] = 0
 
+=======
+def login(req: LoginRequest):
+    user = USERS.get(req.username)
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    if hashlib.sha256(req.password.encode()).hexdigest() != user["password"]:
+        raise HTTPException(status_code=401, detail="Wrong password")
+
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
     tgt_id = str(uuid.uuid4())
     tgt_payload = {
         "type": "TGT",
@@ -95,6 +118,7 @@ def login(req: LoginRequest, request: Request):
     }
     tgt = jwt.encode(tgt_payload, SECRET_KEY, algorithm=ALGORITHM)
     ISSUED_TGTS.add(tgt_id)
+<<<<<<< HEAD
     audit("LOGIN", req.username, "OK", f"TGT issued. Role={user['role']} Dept={user['department']}", ip)
     return {"tgt": tgt, "message": f"Welcome {req.username}! TGT issued."}
 
@@ -129,6 +153,31 @@ def request_ticket(req: TicketRequest, request: Request):
     ticket_payload = {
         "type": "SERVICE_TICKET",
         "username": username,
+=======
+    return {"tgt": tgt, "message": f"Welcome {req.username}! TGT issued."}
+
+@app.post("/request-ticket")
+def request_ticket(req: TicketRequest):
+    if req.nonce in USED_NONCES:
+        raise HTTPException(status_code=401, detail="Replay attack detected! Nonce already used.")
+    USED_NONCES.add(req.nonce)
+
+    try:
+        tgt_data = jwt.decode(req.tgt, SECRET_KEY, algorithms=[ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="TGT expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid TGT - possible tampering!")
+
+    if tgt_data.get("type") != "TGT":
+        raise HTTPException(status_code=401, detail="Not a valid TGT")
+    if tgt_data["tgt_id"] not in ISSUED_TGTS:
+        raise HTTPException(status_code=401, detail="TGT not recognized")
+
+    ticket_payload = {
+        "type": "SERVICE_TICKET",
+        "username": tgt_data["username"],
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
         "role": tgt_data["role"],
         "department": tgt_data["department"],
         "clearance": tgt_data["clearance"],
@@ -138,7 +187,10 @@ def request_ticket(req: TicketRequest, request: Request):
         "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30),
     }
     ticket = jwt.encode(ticket_payload, SECRET_KEY, algorithm=ALGORITHM)
+<<<<<<< HEAD
     audit("TICKET", username, "OK", f"Service ticket issued for service={req.service}", ip)
+=======
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
     return {"service_ticket": ticket, "service": req.service}
 
 @app.get("/verify-ticket")
@@ -153,6 +205,7 @@ def verify_ticket(token: str):
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid ticket - tampering detected!")
 
+<<<<<<< HEAD
 @app.get("/audit-log")
 def get_audit_log():
     """Return last 50 audit entries (admin tool)"""
@@ -166,4 +219,8 @@ def get_audit_log():
 if __name__ == "__main__":
     import uvicorn
     logger.info("KDC Authentication Server starting on port 8000")
+=======
+if __name__ == "__main__":
+    import uvicorn
+>>>>>>> 1d045c1acece75acf0bc7117375f5136cc51d08c
     uvicorn.run(app, host="0.0.0.0", port=8000)
