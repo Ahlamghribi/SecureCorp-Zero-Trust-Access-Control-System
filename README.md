@@ -213,8 +213,6 @@ SecureCorp/
 
 **Built with 💜 by Ahlam Ghribi**
 
-*ING4 Cybersecurity — Solo project — Built under pressure, with passion.*
-
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=Ahlamghribi.SecureCorp)
 
 </div>
